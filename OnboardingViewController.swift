@@ -13,7 +13,5 @@ class OnboardingViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: K.BrandColors.blue)
     }
-
-
 }
 
