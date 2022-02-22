@@ -18,6 +18,7 @@ struct K {
         static let background = "background"
         static let whiteText = "whiteText"
         static let yellow = "yellow"
+        static let orangeDark = "orangeDark"
     }
     
     struct Images {
@@ -48,7 +49,7 @@ struct K {
         static let humidity = "humidity"
         static let nextArrow = "nextArrow"
         static let settings = "settings"
-        static let sunset = "sunset"
+        static let sunrise = "sunrise"
         static let windSymbol = "windSymbol"
     }
 }
