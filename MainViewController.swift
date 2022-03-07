@@ -28,7 +28,23 @@ extension MainViewController {
     }
     
     @objc func loactionButtonPressed() {
-        print("и я работаю")
+        
+        let alert = UIAlertController(title: "Добавить новый город", message: "", preferredStyle: .alert)
+        
+        alert.addTextField { textfield in
+            textfield.placeholder = "Введите назавние"
+        }
+        
+        let action = UIAlertAction(title: "Оk", style: .cancel) { action in
+            self.dismiss(animated: true, completion: nil)
+        }
+        let decline = UIAlertAction(title: "Отмена", style: .default) { action in
+            self.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(action)
+        alert.addAction(decline)
+        present(alert, animated: true, completion: nil)
+       
     }
     
     
