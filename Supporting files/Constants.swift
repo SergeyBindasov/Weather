@@ -20,6 +20,8 @@ struct K {
         static let yellow = "yellow"
         static let orangeDark = "orangeDark"
         static let subviewBack = "subviewBack"
+        static let settingsText = "settingsText"
+        static let segment = "segment"
     }
     
     struct Images {
