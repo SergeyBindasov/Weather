@@ -29,6 +29,7 @@ struct K {
         static let cloudBttm = "cloudBttm"
         static let cloudTop = "cloudTop"
         static let halfCloud = "halfCloud"
+        static let ellipse = "ellipse"
     }
     
     struct WeatherIcons {
