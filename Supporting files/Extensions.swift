@@ -19,3 +19,13 @@ extension UIView {
         }
     }
 }
+
+extension Date {
+
+func getCurrentDate() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm, E dd MMMM"
+    dateFormatter.locale = Locale(identifier: "ru_RU")
+        return dateFormatter.string(from: Date())
+    }
+}

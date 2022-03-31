@@ -11,6 +11,8 @@ struct MeasurementHelp {
     
     var measurementFormatter = MeasurementFormatter()
     
+    let formatter = DateFormatter()
+    
     func inCelcius(temp: Double) -> String {
         let measurement = Measurement(value: temp, unit: UnitTemperature.celsius)
         measurementFormatter.unitStyle = .short
@@ -27,8 +29,11 @@ struct MeasurementHelp {
         return measurementFormatter.string(from: measurement)
     }
     
-        
-
+    func timeStringFromUnixTime(unixTime: Double) -> String {
+        let date = Date(timeIntervalSince1970: unixTime)
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
     
 
     
