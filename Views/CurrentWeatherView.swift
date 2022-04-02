@@ -13,21 +13,12 @@ class CurrentWeatherView: UIView {
     
     let measurment = MeasurementHelp()
     
-//    var currentWeatherData: WeatherModel? {
-//        didSet {
-//            guard let currentWeatherData = currentWeatherData else { return }
-//            sunriseTimeLabel.text = currentWeatherData.sunrise
-//            sunsetTimeLabel.text = currentWeatherData.sunset
-//            minTempLabel.text = currentWeatherData.minTemp + " " + "/"
-//            maxTempLabel.text = currentWeatherData.maxTemp
-//            currentTemperatureLabel.text = currentWeatherData.currentTemp
-//            descriptionLabel.text = currentWeatherData.description
-//            cloudText.text = currentWeatherData.cloudiness
-//            windText.text = currentWeatherData.windSpeed + " " + "м/c"
-//            dropsText.text = currentWeatherData.humidity + " " + "%"
-//            
-//        }
-//    }
+    private lazy var cityLabel: UILabel = {
+       var label = UILabel()
+        label.font = UIFont(name: "Rubik-Medium", size: 18)
+        label.textColor = UIColor(named: K.BrandColors.blackText)
+        return label
+    }()
     
     private lazy var infoRect: UIView = {
        let rect = UIView()
@@ -230,6 +221,7 @@ class CurrentWeatherView: UIView {
 extension CurrentWeatherView {
     
     func updateCurrentWeatherUI(with weather: WeatherModel) {
+        cityLabel.text = weather.cityName
         sunriseTimeLabel.text = weather.sunrise
         sunsetTimeLabel.text = weather.sunset
         minTempLabel.text = weather.minTemp + " " + "/"
@@ -246,12 +238,18 @@ extension CurrentWeatherView {
     
     func setupLayout() {
         backgroundColor = .white
-        addSubviews(infoRect)
+        addSubviews(cityLabel, infoRect)
         infoRect.addSubviews(elipse, sunriseImg, sunsetImg, sunriseTimeLabel, sunsetTimeLabel,temperaturesStackView, mainVerticalStackView, mainHorizontalStackView, currentDateLabel)
         
+        cityLabel.snp.makeConstraints { make in
+            make.centerX.equalTo(infoRect.snp.centerX)
+            make.top.equalTo(safeAreaLayoutGuide)
+        }
+        
         infoRect.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(self.safeAreaLayoutGuide)
+            make.leading.trailing.equalTo(self.safeAreaLayoutGuide)
             make.bottom.equalTo(currentDateLabel.snp.bottom).offset(15)
+            make.top.equalTo(cityLabel.snp.bottom).offset(5)
         }
         
         elipse.snp.makeConstraints { make in
