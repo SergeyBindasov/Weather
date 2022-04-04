@@ -14,8 +14,24 @@ class MainViewController: UIViewController {
     
     var pageController: UIPageViewController!
     var pageControl = UIPageControl()
+   
     
-    var controllers: [UIViewController] = [CurrentWeatherViewController(cityName: "Moscow"), CurrentWeatherViewController(cityName: "Paris"), CurrentWeatherViewController(cityName: "Tokio")]
+    var controllers: [UIViewController] = [CurrentWeatherViewController(cityName: "Moscow"),
+                                           CurrentWeatherViewController(cityName: "Paris"),
+                                           CurrentWeatherViewController(cityName: "Tokio")]
+    
+    private lazy var dailyWeatherCollection: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.register(DailyWeatherCell.self, forCellWithReuseIdentifier: String(describing: DailyWeatherCell.self))
+        collection.delegate = self
+        collection.dataSource = self
+        collection.showsHorizontalScrollIndicator = false
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 45, height: 85)
+        layout.sectionInset = UIEdgeInsets(top: .zero, left: 5, bottom: .zero, right: 5)
+        return collection
+    }()
     
     
    
@@ -31,6 +47,20 @@ class MainViewController: UIViewController {
     
     }
 }
+
+//MARK: - CollectionViewMethods
+extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 8
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = dailyWeatherCollection.dequeueReusableCell(withReuseIdentifier: String(describing: DailyWeatherCell.self), for: indexPath) as? DailyWeatherCell
+                return cell!
+    }
+}
+
 
 //MARK: - UIPageViewControllerDelegate & UIPageViewControllerDataSource
 extension MainViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
@@ -116,15 +146,22 @@ func setupPageController() {
     }
     
  func setupLayout() {
-     view.addSubviews(pageController.view, pageControl)
+     view.addSubviews(pageController.view, pageControl, dailyWeatherCollection)
      view.backgroundColor = .white
      pageController.view.snp.makeConstraints { make in
-         make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+         make.top.equalTo(pageControl.snp.bottom).offset(5)
+         make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
          make.height.equalTo(UIScreen.main.bounds.height / 3.5)
      }
      pageControl.snp.makeConstraints { make in
-         make.top.equalTo(pageController.view.snp.bottom)
+         make.top.equalTo(view.safeAreaLayoutGuide)
          make.centerX.equalTo(view.snp.centerX)
+     }
+     
+     dailyWeatherCollection.snp.makeConstraints { make in
+         make.top.equalTo(pageController.view.snp.bottom).offset(12)
+         make.leading.width.equalTo(view.safeAreaLayoutGuide)
+         make.height.equalTo(UIScreen.main.bounds.height / 10)
      }
    }
     

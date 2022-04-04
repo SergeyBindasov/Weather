@@ -50,7 +50,6 @@ class CurrentWeatherView: UIView {
         let label = UILabel()
         label.font = UIFont(name: "Rubik-Medium", size: 14)
         label.textColor = .white
-        //label.text = "05:41"
         return label
     }()
     
@@ -58,13 +57,11 @@ class CurrentWeatherView: UIView {
         let label = UILabel()
         label.font = UIFont(name: "Rubik-Medium", size: 14)
         label.textColor = .white
-        //label.text = "19:31"
         return label
     }()
     
     private lazy var minTempLabel: UILabel = {
       let label = UILabel()
-       // label.text = measurment.inCelcius(temp: 7) + " " + "/"
         label.font = UIFont(name: "Rubik-Regular", size: 16)
         label.textColor = .white
      return label
@@ -72,7 +69,6 @@ class CurrentWeatherView: UIView {
     
     private lazy var maxTempLabel: UILabel = {
       let label = UILabel()
-       // label.text = " " + measurment.inCelcius(temp: 13)
         label.font = UIFont(name: "Rubik-Regular", size: 16)
         label.textColor = .white
      return label
@@ -103,7 +99,6 @@ class CurrentWeatherView: UIView {
         label.font = UIFont(name: "Rubik-Medium", size: 36)
         label.textColor = .white
         label.textAlignment = .center
-        //label.text = measurment.inCelcius(temp: 13)
         return label
     }()
     
@@ -111,7 +106,6 @@ class CurrentWeatherView: UIView {
         let label = UILabel()
         label.font = UIFont(name: "Rubik-Regular", size: 16)
         label.textColor = .white
-        //label.text = "Возможен небольшой дождь"
         label.numberOfLines = 0
         return label
     }()
@@ -149,7 +143,6 @@ class CurrentWeatherView: UIView {
         let label = UILabel()
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         label.textColor = .white
-        //label.text = "3 м/с"
         return label
     }()
     
@@ -172,7 +165,6 @@ class CurrentWeatherView: UIView {
         let label = UILabel()
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         label.textColor = .white
-        //label.text = "75 %"
         return label
     }()
     
@@ -208,8 +200,6 @@ class CurrentWeatherView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLayout()
-        
-        
     }
     
     required init?(coder: NSCoder) {
@@ -231,7 +221,6 @@ extension CurrentWeatherView {
         cloudText.text = weather.cloudiness
         windText.text = weather.windSpeed + " " + "м/c"
         dropsText.text = weather.humidity + " " + "%"
-            
         }
         
     

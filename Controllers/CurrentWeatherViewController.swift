@@ -8,20 +8,13 @@
 import Foundation
 import UIKit
 
-class CurrentWeatherViewController: UIViewController, WeatherManagerDelegate {
+class CurrentWeatherViewController: UIViewController {
    
     var cityName: String
     
     let currentWeatherView = CurrentWeatherView()
     
     var networkManager = WeatherNetworkManager()
-    
-    func didUpdateWeather(_ weatherManager: WeatherNetworkManager, weather: WeatherModel) {
-        DispatchQueue.main.async {
-            self.currentWeatherView.updateCurrentWeatherUI(with: weather)
-        }
-    }
-    
     
     init(cityName: String) {
         self.cityName = cityName
@@ -37,5 +30,14 @@ class CurrentWeatherViewController: UIViewController, WeatherManagerDelegate {
         view = currentWeatherView
         networkManager.delegate = self
         networkManager.fetchWeatherBy(cityName: cityName)
+    }
+}
+
+
+extension CurrentWeatherViewController: WeatherManagerDelegate {
+    func didUpdateWeather(_ weatherManager: WeatherNetworkManager, weather: WeatherModel) {
+        DispatchQueue.main.async {
+            self.currentWeatherView.updateCurrentWeatherUI(with: weather)
+        }
     }
 }
