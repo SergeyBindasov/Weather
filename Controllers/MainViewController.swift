@@ -11,9 +11,13 @@ import SnapKit
 import CoreLocation
 
 class MainViewController: UIViewController {
+   
+    
     
     var pageController: UIPageViewController!
     var pageControl = UIPageControl()
+    let network = ThreeHourWeatherNetworkManager()
+    var myArray = [ThreeHourWeatherModel]()
    
     
     var controllers: [UIViewController] = [CurrentWeatherViewController(cityName: "Moscow"),
@@ -33,31 +37,62 @@ class MainViewController: UIViewController {
         return collection
     }()
     
+    private lazy var dailyClickLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Подробнее на 24 часа"
+        label.font = UIFont(name: "Rubik-Regular", size: 16)
+        label.attributedText = NSAttributedString(string: "Подробнее на 24 часа", attributes:
+            [.underlineStyle: NSUnderlineStyle.single.rawValue])
+        return label
+    }()
+    
     
    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+      
+        network.fetchThreHourWeatherBy(cityName: "moscow")
+        network.onDataUpdate = { [weak self] (data: [ThreeHourWeatherModel]) in
+            self?.useData(data: data)
+            }
+    
         setupPageController()
         setupLayout()
         
+                
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: K.SystemSymbols.settings), style: .plain, target: self, action: #selector(settingsButtonPressed))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: K.SystemSymbols.location), style: .plain, target: self, action: #selector(loactionButtonPressed))
         navigationController?.navigationBar.tintColor = UIColor(named: K.BrandColors.blackText)
+    }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 }
 
 //MARK: - CollectionViewMethods
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 8
+        return myArray.count
     }
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = dailyWeatherCollection.dequeueReusableCell(withReuseIdentifier: String(describing: DailyWeatherCell.self), for: indexPath) as? DailyWeatherCell
-                return cell!
+        let cell = dailyWeatherCollection.dequeueReusableCell(withReuseIdentifier: String(describing: DailyWeatherCell.self), for: indexPath) as! DailyWeatherCell
+        
+        cell.updateWeather(with: myArray[indexPath.item])
+        
+        
+                return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+       
     }
 }
 
@@ -94,7 +129,14 @@ extension MainViewController: UIPageViewControllerDelegate, UIPageViewController
 
 // MARK: - Class Methods
 extension MainViewController {
-        
+    
+    func useData(data: [ThreeHourWeatherModel]) -> [ThreeHourWeatherModel] {
+        myArray = data
+        dailyWeatherCollection.reloadData()
+        return myArray
+    }
+    
+
     
     @objc func settingsButtonPressed() {
         navigationController?.pushViewController(SettingsViewController(), animated: true)
@@ -119,6 +161,7 @@ extension MainViewController {
             self.dismiss(animated: true, completion: nil)
         }
         let decline = UIAlertAction(title: "Отмена", style: .default) { action in
+         
             self.dismiss(animated: true, completion: nil)
         }
         alert.addAction(action)
@@ -146,11 +189,12 @@ func setupPageController() {
     }
     
  func setupLayout() {
-     view.addSubviews(pageController.view, pageControl, dailyWeatherCollection)
+     view.addSubviews(pageController.view, pageControl, dailyClickLabel, dailyWeatherCollection)
      view.backgroundColor = .white
      pageController.view.snp.makeConstraints { make in
          make.top.equalTo(pageControl.snp.bottom).offset(5)
-         make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+         make.leading.trailing.equalTo(view.safeAreaLayoutGuide).offset(16)
+         make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
          make.height.equalTo(UIScreen.main.bounds.height / 3.5)
      }
      pageControl.snp.makeConstraints { make in
@@ -158,9 +202,15 @@ func setupPageController() {
          make.centerX.equalTo(view.snp.centerX)
      }
      
+     dailyClickLabel.snp.makeConstraints { make in
+         make.top.equalTo(pageController.view.snp.bottom).offset(16)
+         make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
+     }
+     
      dailyWeatherCollection.snp.makeConstraints { make in
-         make.top.equalTo(pageController.view.snp.bottom).offset(12)
-         make.leading.width.equalTo(view.safeAreaLayoutGuide)
+         make.top.equalTo(dailyClickLabel.snp.bottom).offset(10)
+         make.leading.equalTo(view.safeAreaLayoutGuide).offset(16)
+         make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-16)
          make.height.equalTo(UIScreen.main.bounds.height / 10)
      }
    }

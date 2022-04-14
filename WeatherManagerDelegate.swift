@@ -11,5 +11,8 @@ import Foundation
 protocol WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherNetworkManager, weather: WeatherModel)
- 
+    
 }
+
+
+

@@ -45,6 +45,9 @@ struct K {
         static let thermoSun = "thermoSun"
         static let thunder = "thunder"
         static let wind = "wind"
+        static let snow = "snow"
+        static let fog = "fog"
+        
     }
     
     struct SystemSymbols {

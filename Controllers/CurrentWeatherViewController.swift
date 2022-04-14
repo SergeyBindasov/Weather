@@ -35,6 +35,7 @@ class CurrentWeatherViewController: UIViewController {
 
 
 extension CurrentWeatherViewController: WeatherManagerDelegate {
+  
     func didUpdateWeather(_ weatherManager: WeatherNetworkManager, weather: WeatherModel) {
         DispatchQueue.main.async {
             self.currentWeatherView.updateCurrentWeatherUI(with: weather)

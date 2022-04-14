@@ -10,11 +10,11 @@ import CoreLocation
 
 struct WeatherNetworkManager {
     
-var delegate: WeatherManagerDelegate?
+    var delegate: WeatherManagerDelegate?
     
-let help = MeasurementHelp()
-
-let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&units=metric"
+    let help = MeasurementHelp()
+    
+    let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&units=metric"
     
     
     func fetchWeatherBy(cityName: String) {
@@ -37,7 +37,7 @@ let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=15155ae3
                 if let safeData = data {
                     if let weather = parseJSON(weatherData: safeData) {
                         delegate?.didUpdateWeather(self, weather: weather)
-                        print(weather)
+                        //print(weather)
                     }
                 }
             }
@@ -64,10 +64,12 @@ let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=15155ae3
             let humidity = String(decodedData.main.humidity)
             let currentWeather = WeatherModel(cityName: city, conditionId: condition, sunrise: sunrise, sunset: sunset, minTemp: minTemp, maxTemp: maxTemp, currentTemp: currentTemp, description: description, cloudiness: cloud, windSpeed: windSpeed, humidity: humidity)
             return currentWeather
-           
+            
         } catch {
             print(error.localizedDescription)
             return nil
         }
     }
 }
+
+
