@@ -12,12 +12,18 @@ class CurrentWeatherViewController: UIViewController {
    
     var cityName: String
     
+    var latitude: Double
+    
+    var longitude: Double
+    
     let currentWeatherView = CurrentWeatherView()
     
     var networkManager = WeatherNetworkManager()
     
-    init(cityName: String) {
+    init(cityName: String, latitude: Double, longitude: Double) {
         self.cityName = cityName
+        self.latitude = latitude
+        self.longitude = longitude
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -30,6 +36,8 @@ class CurrentWeatherViewController: UIViewController {
         view = currentWeatherView
         networkManager.delegate = self
         networkManager.fetchWeatherBy(cityName: cityName)
+        networkManager.fetchWeatherBy(latitude: latitude, longitude: longitude)
+        
     }
 }
 
@@ -41,4 +49,12 @@ extension CurrentWeatherViewController: WeatherManagerDelegate {
             self.currentWeatherView.updateCurrentWeatherUI(with: weather)
         }
     }
+    
+//    func check(city: String, latitude: Double, longitude: Double) {
+//        if latitude == 0 || longitude == 0 {
+//            networkManager.fetchWeatherBy(cityName: city)
+//        } else {
+//            networkManager.fetchWeatherBy(latitude: latitude, longitude: longitude)
+//        }
+//    }
 }

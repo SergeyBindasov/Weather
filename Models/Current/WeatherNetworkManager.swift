@@ -14,6 +14,7 @@ struct WeatherNetworkManager {
     
     let help = MeasurementHelp()
     
+    
     let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&units=metric"
     
     
@@ -22,12 +23,13 @@ struct WeatherNetworkManager {
         performRequest(with: urlString)
     }
     
-    func fetchWeatherBy(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+    func fetchWeatherBy(latitude: Double, longitude: Double) {
         let urlString = "\(weatherUrl)&lat=\(latitude)&lon=\(longitude)"
         performRequest(with: urlString)
     }
     
     func performRequest(with urlString: String) {
+       
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
@@ -36,8 +38,9 @@ struct WeatherNetworkManager {
                 }
                 if let safeData = data {
                     if let weather = parseJSON(weatherData: safeData) {
+                      
+                       //print( weather.cityName)
                         delegate?.didUpdateWeather(self, weather: weather)
-                        //print(weather)
                     }
                 }
             }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 extension UIView {
     func addSubviewWithAutoLayout(_ view: UIView) {
@@ -27,5 +28,12 @@ func getCurrentDate() -> String {
         dateFormatter.dateFormat = "HH:mm, E dd MMMM"
     dateFormatter.locale = Locale(identifier: "ru_RU")
         return dateFormatter.string(from: Date())
+    }
+}
+
+extension Results {
+    func toArray<T>(ofType: T.Type) -> [T] {
+        let array = Array(self) as! [T]
+        return array
     }
 }

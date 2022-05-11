@@ -13,17 +13,17 @@ class DailyWeatherCell: UICollectionViewCell {
     
     let measurment = MeasurementHelp()
     
-    var weather: ThreeHourWeatherModel? {
-        didSet {
-            if let weather = weather {
-                timeLabel.text = weather.time
-                weatherImage.image = UIImage(named: weather.conditionName)
-                weatherLabel.text = weather.temp
-            }
-        }
-    }
+//    var weather: ThreeHourWeatherModel? {
+//        didSet {
+//            if let weather = weather {
+//                timeLabel.text = weather.time
+//                weatherImage.image = UIImage(named: weather.conditionName)
+//                weatherLabel.text = weather.temp
+//            }
+//        }
+//    }
     
-     lazy var timeLabel: UILabel = {
+    private lazy var timeLabel: UILabel = {
         let time = UILabel()
         //time.text = "12:00"
         time.font = UIFont(name: "Rubik-Regular", size: 12)
@@ -31,13 +31,13 @@ class DailyWeatherCell: UICollectionViewCell {
         return time
     }()
     
-     lazy var weatherImage: UIImageView = {
+    private lazy var weatherImage: UIImageView = {
         let image = UIImageView()
         //image.image = UIImage(named: K.WeatherIcons.sun)
         return image
     }()
     
-     lazy var weatherLabel: UILabel = {
+    private lazy var weatherLabel: UILabel = {
         let time = UILabel()
         //time.text = "17"
         time.font = UIFont(name: "Rubik-Regular", size: 16)

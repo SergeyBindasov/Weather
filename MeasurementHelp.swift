@@ -35,6 +35,12 @@ struct MeasurementHelp {
         return formatter.string(from: date)
     }
     
+    func dateStringFromUnixTime(unixTime: Double) -> String {
+        let date = Date(timeIntervalSince1970: unixTime)
+        formatter.dateFormat = "dd/MM"
+        return formatter.string(from: date)
+    }
+    
 
     
 }

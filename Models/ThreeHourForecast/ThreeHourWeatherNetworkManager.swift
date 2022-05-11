@@ -6,12 +6,15 @@
 //
 
 import Foundation
+import RealmSwift
 
 class ThreeHourWeatherNetworkManager {
     
 let help = MeasurementHelp()
 
 var forecast: [ThreeHourWeatherModel] = []
+    
+var cities: Results<CityCoordintes>?
 
 var temp: String = ""
 var time: String = ""
@@ -22,8 +25,14 @@ var id: Int = 0
     
     let threeHourForecaetUrl = "https://api.openweathermap.org/data/2.5/forecast?&appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&cnt=12&units=metric"
     
-     func fetchThreHourWeatherBy(cityName: String) {
+     func fetchThreeHourWeatherBy(cityName: String) {
         let urlString = "\(threeHourForecaetUrl)&q=\(cityName)"
+        performHourRequest(with: urlString)
+       
+    }
+    
+    func fetchWeatherBy(latitude: Double, longitude: Double) {
+        let urlString = "\(threeHourForecaetUrl)&lat=\(latitude)&lon=\(longitude)"
         performHourRequest(with: urlString)
     }
     
@@ -35,7 +44,7 @@ var id: Int = 0
                     print(error!.localizedDescription)
                 }
                 if let safeData = data {
-                    if let weather = self.parseHourJSON(weatherData: safeData) {
+                    if let _ = self.parseHourJSON(weatherData: safeData) {
                         DispatchQueue.main.async {
                             self.onDataUpdate?(self.forecast)
 
