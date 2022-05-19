@@ -6,13 +6,10 @@
 //
 
 import Foundation
-import RealmSwift
 
 class GeocodingRequest {
     
-    let realm = try! Realm()
-    
-   var cities: Results<CityCoordintes>?
+    var delegate: GeocodingManagerDelegate?
     
     var name: String = ""
     var lat: Double = 0
@@ -36,20 +33,7 @@ class GeocodingRequest {
             }
             if let safeData = data {
                 if let coordinates = self.parseJson(with: safeData) {
-                 
-                    DispatchQueue.main.async {
-                        
-                       
-                        let newCity = CityCoordintes()
-                        newCity.cityName = coordinates.cityName
-                        newCity.latitude = coordinates.latitude
-                        newCity.longitude = coordinates.longitude
-                        self.saveCity(city: newCity)
-                        self.loadCities()
-                       print(self.cities?.count)
-                        
-                    }
-                    
+                    delegate?.createNewCity(self, model: coordinates)
                 }
             }
         }
@@ -65,38 +49,13 @@ class GeocodingRequest {
                 self.name = place.name
                 self.lat = place.lat
                 self.lon = place.lon
-                let cityCoordintanes = GeocodingModel(cityName: name, latitude: lat, longitude: lon)
-                
+                _ = GeocodingModel(cityName: name, latitude: lat, longitude: lon)
             }
-          
-           
             return GeocodingModel(cityName: name, latitude: lat, longitude: lon)
         }
         catch {
             print(error)
             return nil
         }
-        
     }
-    
-    func saveCity(city: CityCoordintes) {
-        do {
-            try realm.write({
-                realm.add(city)
-            })
-        } catch {
-            print("ошибка при сохранении города \(error)")
-        }
-        
-    }
-    
-    func loadCities() {
-
-        cities = realm.objects(CityCoordintes.self)
-       
-    }
-    
-    
-    
-    
 }

@@ -65,6 +65,33 @@ extension DailyWeatherCell {
         weatherLabel.text = weather.temp
     }
     
+    func isTapped() {
+        if contentView.backgroundColor == .white {
+            contentView.backgroundColor = UIColor(named: K.BrandColors.blue)
+           
+            timeLabel.textColor = .white
+            weatherLabel.textColor = .white
+        } else if contentView.backgroundColor == UIColor(named: K.BrandColors.blue) {
+           
+            contentView.backgroundColor = .white
+            timeLabel.textColor = UIColor(named: K.BrandColors.lightText)
+            weatherLabel.textColor = UIColor(named: K.BrandColors.blackText)
+        }
+    }
+    
+//    func setGradient() {
+//        let colorTop =  UIColor(red: 35/255.0, green: 80/255.0, blue: 200/255.0, alpha: 1.0).cgColor
+//        let colorBottom = UIColor(red: 115/255.0, green: 151/255.0, blue: 244/255.0, alpha: 1.0).cgColor
+//        let gradientLayer = CAGradientLayer()
+//            gradientLayer.colors = [colorTop, colorBottom]
+//            gradientLayer.locations = [0.0, 1.0]
+//        gradientLayer.borderWidth = 0.5
+//        gradientLayer.cornerRadius = 22
+//        gradientLayer.frame = contentView.frame
+//        contentView.layer.insertSublayer(gradientLayer, at: 0)
+//    
+//    }
+    
     func  setupLayout() {
         
         contentView.backgroundColor = .white//UIColor(named: K.BrandColors.blue)

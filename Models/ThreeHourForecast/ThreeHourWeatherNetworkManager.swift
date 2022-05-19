@@ -6,29 +6,23 @@
 //
 
 import Foundation
-import RealmSwift
 
 class ThreeHourWeatherNetworkManager {
     
-let help = MeasurementHelp()
-
-var forecast: [ThreeHourWeatherModel] = []
+    var delegate: ThreeHourWeatherDelegate?
     
-var cities: Results<CityCoordintes>?
-
-var temp: String = ""
-var time: String = ""
-var id: Int = 0
+    let help = MeasurementHelp()
     
-    var onDataUpdate: ((_ data: [ThreeHourWeatherModel]) -> Void)?
-   
+    var temp: String = ""
+    var time: String = ""
+    var id: Int = 0
     
-    let threeHourForecaetUrl = "https://api.openweathermap.org/data/2.5/forecast?&appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&cnt=12&units=metric"
+    let threeHourForecaetUrl = "https://api.openweathermap.org/data/2.5/forecast?&appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&cnt=8&units=metric"
     
-     func fetchThreeHourWeatherBy(cityName: String) {
+    func fetchThreeHourWeatherBy(cityName: String) {
         let urlString = "\(threeHourForecaetUrl)&q=\(cityName)"
         performHourRequest(with: urlString)
-       
+        
     }
     
     func fetchWeatherBy(latitude: Double, longitude: Double) {
@@ -44,10 +38,9 @@ var id: Int = 0
                     print(error!.localizedDescription)
                 }
                 if let safeData = data {
-                    if let _ = self.parseHourJSON(weatherData: safeData) {
+                    if let weather = self.parseHourJSON(weatherData: safeData) {
                         DispatchQueue.main.async {
-                            self.onDataUpdate?(self.forecast)
-
+                            self.delegate?.didUpdateHourWeather(self, weather: weather)
                         }
                     }
                 }
@@ -56,28 +49,28 @@ var id: Int = 0
         }
     }
     
-     func parseHourJSON(weatherData: Data) -> ThreeHourWeatherModel? {
+    func parseHourJSON(weatherData: Data) -> [ThreeHourWeatherModel]? {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
+            var models = [ThreeHourWeatherModel]()
             let decodedData = try decoder.decode(ThreeHourWeatherData.self, from: weatherData)
-
-            for list in decodedData.list {
-
+            var model = ThreeHourWeatherModel(time: time, conditionID: id, temp: temp)
+            decodedData.list.forEach { list in
                 self.time = help.timeStringFromUnixTime(unixTime: list.dt)
                 self.temp = help.inCelcius(temp: list.main.temp)
-                for w in list.weather {
-                    self.id = w.id
-                    forecast.append(ThreeHourWeatherModel(time: time, conditionID: id, temp: temp))
+                list.weather.forEach { weather in
+                    self.id = weather.id
+                    model.time = time
+                    model.conditionID = id
+                    model.temp = temp
+                    models.append(model)
                 }
             }
-            
-           return  ThreeHourWeatherModel(time: time, conditionID: id, temp: temp)
-            
+            return models
         } catch {
             print(error)
             return nil
         }
     }
-    
 }

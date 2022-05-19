@@ -6,9 +6,7 @@
 //
 
 import Foundation
-
 import RealmSwift
-
 
 class CityCoordintes: Object {
     @objc dynamic var cityName: String = ""

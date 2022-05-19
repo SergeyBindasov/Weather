@@ -127,6 +127,10 @@ extension ForecastTableViewCell {
             make.bottom.equalTo(contentView).offset(-10)
         }
         
+        weatherImage.snp.makeConstraints { make in
+            make.width.height.lessThanOrEqualTo(17)
+        }
+        
         dateLabel.snp.makeConstraints { make in
             make.leading.equalTo(innerView.snp.leading).offset(10)
             make.top.equalTo(innerView.snp.top).offset(6)
