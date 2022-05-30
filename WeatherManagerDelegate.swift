@@ -25,4 +25,6 @@ protocol ForecastWeatherDelegate {
     
 }
 
-
+protocol DayDetailsWeatherDelegate {
+    func didUpdateDayDetailsWeather(_ weatherManager: DayDetailsNetworkManager, weather: [DayDetailsModel])
+}

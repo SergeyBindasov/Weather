@@ -32,7 +32,8 @@ class GeocodingRequest {
                 print(error!)
             }
             if let safeData = data {
-                if let coordinates = self.parseJson(with: safeData) {
+                if let coordinates = parseJson(with: safeData) {
+                    
                     delegate?.createNewCity(self, model: coordinates)
                 }
             }
@@ -44,8 +45,8 @@ class GeocodingRequest {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
-            let palces = try decoder.decode([GeocodingData].self, from: safeData)
-            for place in palces {
+            let places = try decoder.decode([GeocodingData].self, from: safeData)
+            for place in places {
                 self.name = place.name
                 self.lat = place.lat
                 self.lon = place.lon

@@ -109,7 +109,7 @@ class MainViewController: UIViewController {
         forecast.delegate = self
         
         createCurrentWeatherVC()
-        loadForecast(at: currentCity)
+        //loadForecast(at: currentCity)
         
         // Layout
         setupPageController()
@@ -129,7 +129,8 @@ class MainViewController: UIViewController {
     }
     
     @objc func dailyTapped(sender:UITapGestureRecognizer) {
-        dailyClickLabel.textColor = .red
+        let day = DayWeatherViewController()
+        show(day, sender: nil)
     }
     
     @objc func monthTapped(sender:UITapGestureRecognizer) {
@@ -297,6 +298,7 @@ extension MainViewController {
                 array.forEach { place in
                     let newCity = CurrentWeatherViewController(cityName: place.cityName, latitude: place.latitude, longitude: place.longitude)
                     self.controllers.append(newCity)
+                    loadForecast(at: 0)
                 }
             }
         } catch {
@@ -322,6 +324,7 @@ extension MainViewController {
         let action = UIAlertAction(title: "Оk", style: .cancel) { action in
             guard let textfields = alert.textFields, let cityFromTF = textfields[0].text else { return }
             self.geo.getCityCoordinatesBy(name: cityFromTF)
+           
             self.dismiss(animated: true, completion: nil)
         }
         let decline = UIAlertAction(title: "Отмена", style: .default) { action in

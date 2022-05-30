@@ -16,6 +16,8 @@ struct List: Codable {
     var dt: Double
     var main: Main
     var weather: [Weather]
+    var wind: Wind
+    var clouds: Clouds
 }
 
 
