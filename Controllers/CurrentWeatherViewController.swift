@@ -49,12 +49,4 @@ extension CurrentWeatherViewController: WeatherManagerDelegate {
             self.currentWeatherView.updateCurrentWeatherUI(with: weather)
         }
     }
-    
-//    func check(city: String, latitude: Double, longitude: Double) {
-//        if latitude == 0 || longitude == 0 {
-//            networkManager.fetchWeatherBy(cityName: city)
-//        } else {
-//            networkManager.fetchWeatherBy(latitude: latitude, longitude: longitude)
-//        }
-//    }
 }

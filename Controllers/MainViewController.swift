@@ -129,8 +129,11 @@ class MainViewController: UIViewController {
     }
     
     @objc func dailyTapped(sender:UITapGestureRecognizer) {
-        let day = DayWeatherViewController()
+        let array = Array(realm.objects(CityCoordintes.self))
+        if let cityIndex = currentCity {
+        let day = DayWeatherViewController(city: array[cityIndex])
         show(day, sender: nil)
+        }
     }
     
     @objc func monthTapped(sender:UITapGestureRecognizer) {

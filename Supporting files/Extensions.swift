@@ -52,3 +52,18 @@ public class DateValueFormatter: NSObject, AxisValueFormatter {
         return dateFormatter.string(from: date)
     }
 }
+
+
+
+class DigitValueFormatter : NSObject, ValueFormatter {
+    let help = MeasurementHelp()
+
+    func stringForValue(_ value: Double,
+                        entry: ChartDataEntry,
+                        dataSetIndex: Int,
+                        viewPortHandler: ViewPortHandler?) -> String {
+        
+        let valueWithoutDecimalPart = help.inCelcius(temp: value)
+        return valueWithoutDecimalPart
+    }
+}

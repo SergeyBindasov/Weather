@@ -12,18 +12,37 @@ import Charts
 
 class DayWeatherViewController: UIViewController {
     
+    var city: CityCoordintes
+    
     var dailyWeatherArray = [DayDetailsModel]()
     var network = DayDetailsNetworkManager()
-    
-   // var chartData = [ChartDataEntry]()
+
     var entries = [ChartDataEntry]()
     
-    var timeValues: Double = 0.0
-    var weatherValues: Double = 0.0
+    init(city: CityCoordintes) {
+        self.city = city
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private lazy var scroll: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.showsVerticalScrollIndicator = false
+        scroll.backgroundColor = .white
+        return scroll
+    }()
+    
+    private lazy var mainView: UIView = {
+        let view = UIView()
+        return view
+    }()
     
     private lazy var cityLabel: UILabel = {
         let label = UILabel()
-        label.text = "Москва"
+        label.text = city.cityName
         label.font = UIFont(name: "Rubik-Medium", size: 18)
         label.textColor = UIColor(named: K.BrandColors.blackText)
         return label
@@ -32,9 +51,10 @@ class DayWeatherViewController: UIViewController {
     private lazy var chartView: LineChartView = {
         let chartView = LineChartView()
         chartView.delegate = self
-        
-        chartView.leftAxis.axisMinimum = -5
-        chartView.leftAxis.axisMaximum = 30
+        chartView.xAxis.drawGridLinesEnabled = false
+        chartView.leftAxis.drawAxisLineEnabled = false
+        chartView.leftAxis.axisMinimum = -15
+        chartView.leftAxis.axisMaximum = 40
         chartView.xAxis.labelFont = UIFont(name: "Rubik-Regular", size: 10) ?? .systemFont(ofSize: 10)
         chartView.leftAxis.labelFont = UIFont(name: "Rubik-Regular", size: 10) ?? .systemFont(ofSize: 10)
         chartView.xAxis.labelPosition = .bottom
@@ -63,13 +83,9 @@ class DayWeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        network.fetchWeatherBy(latitude: 55.7504, longitude: 37.6175)
+        network.fetchWeatherBy(latitude: city.latitude, longitude: city.longitude)
         network.delegate = self
         setupLayout()
-        
-        
-        
-        
     
 }
                                     }
@@ -109,8 +125,10 @@ extension DayWeatherViewController: DayDetailsWeatherDelegate {
                 lineSet.fill = ColorFill(cgColor: UIColor(named: K.BrandColors.blue)!.cgColor)
                 lineSet.fillAlpha = 0.7
                 lineSet.drawFilledEnabled = true
-                lineSet.valueFont = UIFont(name: "Rubik-Medium", size: 10) ?? .systemFont(ofSize: 10)
+                
+                lineSet.valueFont = UIFont(name: "Rubik-Medium", size: 12) ?? .systemFont(ofSize: 10)
                 let data = LineChartData(dataSet: lineSet)
+                data.setValueFormatter(DigitValueFormatter())
                 self.chartView.xAxis.setLabelCount(self.entries.count, force: true)
                 self.chartView.data = data
 
@@ -129,26 +147,38 @@ extension DayWeatherViewController: DayDetailsWeatherDelegate {
 extension DayWeatherViewController {
     
  func setupLayout() {
-        view.addSubviews(cityLabel, chartView, tableView)
-        view.backgroundColor = .white
+     view.backgroundColor = .white
+        view.addSubviews(scroll)
+     scroll.addSubviews(mainView)
+     mainView.addSubviews(cityLabel, chartView, tableView)
+     
+     scroll.snp.makeConstraints { make in
+         make.top.bottom.equalToSuperview()
+         make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+         make.width.equalTo(view.snp.width)
+     }
+     
+     mainView.snp.makeConstraints { make in
+         make.edges.equalToSuperview()
+         make.width.height.equalToSuperview()
+     }
+           
+       
         cityLabel.snp.makeConstraints { make in
-            make.leading.equalTo(view.safeAreaLayoutGuide).offset(32)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(15)
+            make.leading.equalTo(mainView).offset(32)
+            make.top.equalTo(mainView).offset(15)
         }
         
         chartView.snp.makeConstraints { make in
             make.top.equalTo(cityLabel.snp.bottom).offset(15)
-            make.centerX.equalTo(view.center)
             make.width.equalTo(UIScreen.main.bounds.width)
-            make.height.equalTo(UIScreen.main.bounds.height / 5)
+            make.height.equalTo(UIScreen.main.bounds.height / 4)
         }
         
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(chartView.snp.bottom).offset(20)
-           
-            make.centerX.equalTo(view.center)
+            make.top.equalTo(chartView.snp.bottom).offset(0)
             make.width.equalToSuperview()
-            make.bottom.equalTo(view.snp.bottom)
+            make.bottom.equalTo(mainView)
         }
         
         
