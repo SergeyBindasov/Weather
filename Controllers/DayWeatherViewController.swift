@@ -13,6 +13,13 @@ class DayWeatherViewController: UIViewController {
     
     var forecastModel: ForecastWeatherModel
     
+    private lazy var scroll: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.showsVerticalScrollIndicator = false
+        scroll.backgroundColor = .white
+        return scroll
+    }()
+    
     private lazy var dayView: DetailsView = {
         let view = DetailsView(frame: UIScreen.main.bounds, title: "День")
         view.updateUI(with: forecastModel)
@@ -22,6 +29,11 @@ class DayWeatherViewController: UIViewController {
     private lazy var nightView: DetailsView = {
         let view = DetailsView(frame: UIScreen.main.bounds, title: "Ночь")
         view.updateUI(with: forecastModel)
+        return view
+    }()
+    
+    private lazy var sunAndMoonView: SunAndMoonView = {
+        let view = SunAndMoonView()
         return view
     }()
     
@@ -45,20 +57,35 @@ class DayWeatherViewController: UIViewController {
 extension DayWeatherViewController {
     func setupLayout() {
         view.backgroundColor = .white
-        view.addSubviews(dayView, nightView)
+        view.addSubviews(scroll)
+        scroll.addSubviews(dayView, nightView, sunAndMoonView)
+        
+        scroll.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.width.equalTo(view.snp.width)
+        }
         
         dayView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(50)
+            make.top.equalTo(scroll).offset(100)
             make.centerX.equalToSuperview()
             make.width.equalTo(UIScreen.main.bounds.width - 30)
-            make.height.equalTo(300)
+            make.height.equalTo(350)
         }
         
         nightView.snp.makeConstraints { make in
             make.top.equalTo(dayView.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
             make.width.equalTo(UIScreen.main.bounds.width - 30)
-            make.height.equalTo(300)
+            make.height.equalTo(350)
+        }
+        
+        sunAndMoonView.snp.makeConstraints { make in
+            make.top.equalTo(nightView.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(UIScreen.main.bounds.width - 30)
+            make.height.equalTo(350)
+            make.bottom.equalToSuperview()
         }
     }
 }

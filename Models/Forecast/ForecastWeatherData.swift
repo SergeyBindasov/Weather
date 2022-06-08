@@ -18,6 +18,8 @@ struct Daily: Codable {
     var pop: Double
     var feelsLike: FeelsLike
     var windSpeed: Double
+    var uvi: Double
+    var clouds: Int
 }
 
 struct Temp: Codable {

@@ -113,27 +113,108 @@ class DetailsView: UIView {
         return label
     }()
     
+    private lazy var uvImageView: UIImageView = {
+        let image = UIImageView()
+        image.contentMode = .scaleAspectFit
+        image.image = UIImage(named: K.WeatherIcons.sun)
+        return image
+    }()
     
+    private lazy var uvLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Rubik-Regular", size: 14)
+        label.textColor = UIColor(named: K.BrandColors.blackText)
+        label.text = "УФ-индекс"
+        return label
+    }()
     
-
+    private lazy var uvHorizontalStack: UIStackView = {
+        let stack = UIStackView()
+        stack.addArrangedSubview(uvImageView)
+        stack.addArrangedSubview(uvLabel)
+        stack.axis = .horizontal
+        stack.spacing = 15
+        return stack
+    }()
     
+    private lazy var uvValue: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Rubik-Regular", size: 18)
+        label.textColor = UIColor(named: K.BrandColors.blackText)
+        return label
+    }()
     
+    private lazy var rainImageView: UIImageView = {
+        let image = UIImageView()
+        image.contentMode = .scaleAspectFit
+        image.image = UIImage(named: K.WeatherIcons.rain)
+        return image
+    }()
     
+    private lazy var rainLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Rubik-Regular", size: 14)
+        label.textColor = UIColor(named: K.BrandColors.blackText)
+        label.text = "Дождь"
+        return label
+    }()
     
+    private lazy var rainHorizontalStack: UIStackView = {
+        let stack = UIStackView()
+        stack.addArrangedSubview(rainImageView)
+        stack.addArrangedSubview(rainLabel)
+        stack.axis = .horizontal
+        stack.spacing = 15
+        return stack
+    }()
     
+    private lazy var rainValue: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Rubik-Regular", size: 18)
+        label.textColor = UIColor(named: K.BrandColors.blackText)
+        return label
+    }()
     
+    private lazy var cloudImageView: UIImageView = {
+        let image = UIImageView()
+        image.contentMode = .scaleAspectFit
+        image.image = UIImage(named: K.WeatherIcons.rainCloud)
+        return image
+    }()
+    
+    private lazy var cloudLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Rubik-Regular", size: 14)
+        label.textColor = UIColor(named: K.BrandColors.blackText)
+        label.text = "Облачность"
+        return label
+    }()
+    
+    private lazy var cloudHorizontalStack: UIStackView = {
+        let stack = UIStackView()
+        stack.addArrangedSubview(cloudImageView)
+        stack.addArrangedSubview(cloudLabel)
+        stack.axis = .horizontal
+        stack.spacing = 15
+        return stack
+    }()
+    
+    private lazy var cloudValue: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Rubik-Regular", size: 18)
+        label.textColor = UIColor(named: K.BrandColors.blackText)
+        return label
+    }()
+  
  init(frame: CGRect, title: String) {
         self.title = title
         super.init(frame: frame)
      setupLayout()
-     
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
 
 extension DetailsView {
@@ -150,16 +231,21 @@ extension DetailsView {
         }
         descritionLabel.text = weather.description.firstUppercased
         windValue.text = weather.wind + " " + "м/c"
+        uvValue.text = weather.uvi
+        rainValue.text = weather.precipitation + " " + "%"
+        cloudValue.text = weather.cloud + " " + "%"
     }
-    
-   
     
     func setupLayout() {
         backgroundColor = UIColor(named: K.BrandColors.subviewBack)
-        addSubviews(topLabel, horizontalStack, descritionLabel, feelsLikeHorizontalStack, feelsLikeValue, windHorizontalStack, windValue)
+        layer.cornerRadius = 5
+        addSubviews(topLabel, horizontalStack, descritionLabel, feelsLikeHorizontalStack, feelsLikeValue, windHorizontalStack, windValue, uvHorizontalStack, uvValue, rainHorizontalStack, rainValue, cloudHorizontalStack, cloudValue)
         
         help.drawLineFromPoint(start: CGPoint(x: 0, y: 145), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 145), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
         help.drawLineFromPoint(start: CGPoint(x: 0, y: 195), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 195), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 245), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 245), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 295), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 295), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 345), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 345), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
         
         topLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(15)
@@ -200,6 +286,45 @@ extension DetailsView {
         
         windValue.snp.makeConstraints { make in
             make.centerY.equalTo(windHorizontalStack.snp.centerY)
+            make.trailing.equalToSuperview().offset(-15)
+        }
+        
+        uvImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(feelsLikeImageView)
+        }
+        
+        uvHorizontalStack.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(15)
+            make.top.equalTo(windHorizontalStack.snp.bottom).offset(20)
+        }
+        
+        uvValue.snp.makeConstraints { make in
+            make.centerY.equalTo(uvHorizontalStack.snp.centerY)
+            make.trailing.equalToSuperview().offset(-15)
+    }
+        rainImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(feelsLikeImageView)
+        }
+        rainHorizontalStack.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(15)
+            make.top.equalTo(uvHorizontalStack.snp.bottom).offset(20)
+        }
+        
+        rainValue.snp.makeConstraints { make in
+            make.centerY.equalTo(rainHorizontalStack.snp.centerY)
+            make.trailing.equalToSuperview().offset(-15)
+    }
+        cloudHorizontalStack.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(15)
+            make.top.equalTo(rainHorizontalStack.snp.bottom).offset(20)
+        }
+        
+        cloudImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(feelsLikeImageView)
+        }
+        
+        cloudValue.snp.makeConstraints { make in
+            make.centerY.equalTo(cloudHorizontalStack.snp.centerY)
             make.trailing.equalToSuperview().offset(-15)
         }
     }

@@ -55,7 +55,7 @@ class ForecastWeatherNetworkManager {
             
                 day.weather.forEach { weather in
                     
-                    var model = ForecastWeatherModel(date: help.dateStringFromUnixTime(unixTime: day.dt),
+                    let model = ForecastWeatherModel(date: help.dateStringFromUnixTime(unixTime: day.dt),
                                                      conditionID: weather.id,
                                                      precipitation: String(format: "%.0f", (day.pop * 100)),
                                                      description: weather.description,
@@ -65,7 +65,10 @@ class ForecastWeatherNetworkManager {
                                                      feelsLikeNight: help.inCelcius(temp: day.feelsLike.night),
                                                      minTemp: help.inCelcius(temp: day.temp.min),
                                                      maxTemp: help.inCelcius(temp: day.temp.max),
-                                                    wind: String(day.windSpeed))
+                                                    wind: String(day.windSpeed),
+                                                     uvi: String(day.uvi),
+                                                     cloud: String(day.clouds)
+                    )
 
                     models.append(model)
                 }

@@ -20,6 +20,8 @@ struct ForecastWeatherModel {
     var minTemp: String
     var maxTemp: String
     var wind: String
+    var uvi: String
+    var cloud: String
     
     var conditionName: String {
         switch conditionID {
