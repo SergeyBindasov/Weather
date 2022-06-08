@@ -11,7 +11,7 @@ import SnapKit
 
 class CurrentWeatherView: UIView {
     
-    let measurment = MeasurementHelp()
+    let measurment = Help()
     
     private lazy var cityLabel: UILabel = {
        var label = UILabel()
@@ -217,7 +217,7 @@ extension CurrentWeatherView {
         minTempLabel.text = weather.minTemp + " " + "/"
         maxTempLabel.text = " " + weather.maxTemp
         currentTemperatureLabel.text = weather.currentTemp
-        descriptionLabel.text = weather.description
+        descriptionLabel.text = weather.description.firstUppercased
         cloudText.text = weather.cloudiness
         windText.text = weather.windSpeed + " " + "м/c"
         dropsText.text = weather.humidity + " " + "%"

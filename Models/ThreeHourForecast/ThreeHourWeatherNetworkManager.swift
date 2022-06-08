@@ -11,7 +11,7 @@ class ThreeHourWeatherNetworkManager {
     
     var delegate: ThreeHourWeatherDelegate?
     
-    let help = MeasurementHelp()
+    let help = Help()
     
     var temp: String = ""
     var time: String = ""

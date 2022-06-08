@@ -16,9 +16,18 @@ struct Daily: Codable {
     var weather: [Weather]
     var temp: Temp
     var pop: Double
+    var feelsLike: FeelsLike
+    var windSpeed: Double
 }
 
 struct Temp: Codable {
+    var day: Double
+    var night: Double
     var min: Double
     var max: Double
+}
+
+struct FeelsLike: Codable {
+    var day: Double
+    var night: Double
 }

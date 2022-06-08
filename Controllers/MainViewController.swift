@@ -131,7 +131,7 @@ class MainViewController: UIViewController {
     @objc func dailyTapped(sender:UITapGestureRecognizer) {
         let array = Array(realm.objects(CityCoordintes.self))
         if let cityIndex = currentCity {
-        let day = DayWeatherViewController(city: array[cityIndex])
+        let day = HourForecastViewController(city: array[cityIndex])
         show(day, sender: nil)
         }
     }
@@ -216,6 +216,10 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return height
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let details = DayWeatherViewController(forecastModel: forecastArray[indexPath.row])
+        navigationController?.show(details, sender: nil)
+    }
 }
 
 

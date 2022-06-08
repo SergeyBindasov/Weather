@@ -53,10 +53,14 @@ public class DateValueFormatter: NSObject, AxisValueFormatter {
     }
 }
 
+extension String {
+    var firstUppercased: String { prefix(1).uppercased() + dropFirst() }
+}
+
 
 
 class DigitValueFormatter : NSObject, ValueFormatter {
-    let help = MeasurementHelp()
+    let help = Help()
 
     func stringForValue(_ value: Double,
                         entry: ChartDataEntry,

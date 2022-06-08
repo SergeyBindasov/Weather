@@ -11,7 +11,7 @@ import SnapKit
 
 class DailyWeatherCell: UICollectionViewCell {
     
-    let measurment = MeasurementHelp()
+    let measurment = Help()
     
 //    var weather: ThreeHourWeatherModel? {
 //        didSet {
@@ -78,19 +78,7 @@ extension DailyWeatherCell {
             weatherLabel.textColor = UIColor(named: K.BrandColors.blackText)
         }
     }
-    
-//    func setGradient() {
-//        let colorTop =  UIColor(red: 35/255.0, green: 80/255.0, blue: 200/255.0, alpha: 1.0).cgColor
-//        let colorBottom = UIColor(red: 115/255.0, green: 151/255.0, blue: 244/255.0, alpha: 1.0).cgColor
-//        let gradientLayer = CAGradientLayer()
-//            gradientLayer.colors = [colorTop, colorBottom]
-//            gradientLayer.locations = [0.0, 1.0]
-//        gradientLayer.borderWidth = 0.5
-//        gradientLayer.cornerRadius = 22
-//        gradientLayer.frame = contentView.frame
-//        contentView.layer.insertSublayer(gradientLayer, at: 0)
-//    
-//    }
+
     
     func  setupLayout() {
         

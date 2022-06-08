@@ -11,7 +11,7 @@ class DayDetailsNetworkManager {
     
     var delegate: DayDetailsWeatherDelegate?
     
-    var help = MeasurementHelp()
+    var help = Help()
     
     var date: String = ""
     var time: Double = 0.0

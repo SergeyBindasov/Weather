@@ -11,7 +11,7 @@ import SnapKit
 
 class DayDetailsTableViewCell: UITableViewCell {
     
-    let help = MeasurementHelp()
+    let help = Help()
     
     private lazy var innerView: UIView = {
        let view = UIView()

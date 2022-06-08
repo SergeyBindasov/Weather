@@ -13,8 +13,13 @@ struct ForecastWeatherModel {
     var conditionID: Int
     var precipitation: String
     var description: String
+    var dayTemp: String
+    var nightTemp: String
+    var feelsLikeDay: String
+    var feelsLikeNight: String
     var minTemp: String
     var maxTemp: String
+    var wind: String
     
     var conditionName: String {
         switch conditionID {

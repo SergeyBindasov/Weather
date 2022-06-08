@@ -11,7 +11,7 @@ import SnapKit
 
 class ForecastTableViewCell: UITableViewCell {
     
-    let measurment = MeasurementHelp()
+    let measurment = Help()
     
     private lazy var innerView: UIView = {
        let view = UIView()
@@ -109,7 +109,7 @@ extension ForecastTableViewCell {
         dateLabel.text = weather.date
         weatherImage.image = UIImage(named: weather.conditionName)
         dropsText.text = weather.precipitation + "%"
-        statusLabel.text = weather.description
+        statusLabel.text = weather.description.firstUppercased
         minTempLabel.text = weather.minTemp + " " + "-" + " "
         maxTempLabel.text = weather.maxTemp
     }

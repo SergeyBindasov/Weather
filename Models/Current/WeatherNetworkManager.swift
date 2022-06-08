@@ -12,7 +12,7 @@ struct WeatherNetworkManager {
     
     var delegate: WeatherManagerDelegate?
     
-    let help = MeasurementHelp()
+    let help = Help()
     
     
     let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&units=metric"
