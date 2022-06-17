@@ -12,20 +12,9 @@ import SnapKit
 class DailyWeatherCell: UICollectionViewCell {
     
     let measurment = Help()
-    
-//    var weather: ThreeHourWeatherModel? {
-//        didSet {
-//            if let weather = weather {
-//                timeLabel.text = weather.time
-//                weatherImage.image = UIImage(named: weather.conditionName)
-//                weatherLabel.text = weather.temp
-//            }
-//        }
-//    }
-    
+        
     private lazy var timeLabel: UILabel = {
         let time = UILabel()
-        //time.text = "12:00"
         time.font = UIFont(name: "Rubik-Regular", size: 12)
         time.textColor = UIColor(named: K.BrandColors.lightText)
         return time
@@ -33,13 +22,11 @@ class DailyWeatherCell: UICollectionViewCell {
     
     private lazy var weatherImage: UIImageView = {
         let image = UIImageView()
-        //image.image = UIImage(named: K.WeatherIcons.sun)
         return image
     }()
     
     private lazy var weatherLabel: UILabel = {
         let time = UILabel()
-        //time.text = "17"
         time.font = UIFont(name: "Rubik-Regular", size: 16)
         time.textColor = UIColor(named: K.BrandColors.blackText)
         return time

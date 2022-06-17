@@ -23,6 +23,7 @@ class CurrentWeatherView: UIView {
     private lazy var infoRect: UIView = {
        let rect = UIView()
         rect.backgroundColor = UIColor(named: K.BrandColors.blue)
+        rect.layer.cornerRadius = 5
         return rect
     }()
     
@@ -120,7 +121,6 @@ class CurrentWeatherView: UIView {
         let label = UILabel()
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         label.textColor = .white
-        //label.text = "0"
         return label
     }()
     

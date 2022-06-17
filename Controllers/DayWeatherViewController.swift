@@ -11,7 +11,9 @@ import SnapKit
 
 class DayWeatherViewController: UIViewController {
     
-    var forecastModel: ForecastWeatherModel
+    var index: Int
+    var forecastArray: [ForecastWeatherModel]
+    var lastIndex: IndexPath = [1,0]
     
     private lazy var scroll: UIScrollView = {
         let scroll = UIScrollView()
@@ -20,15 +22,24 @@ class DayWeatherViewController: UIViewController {
         return scroll
     }()
     
+    private lazy var dateCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.register(DateCell.self, forCellWithReuseIdentifier: String(describing: DateCell.self))
+        collection.dataSource = self
+        collection.delegate = self
+        collection.showsHorizontalScrollIndicator = false
+        layout.scrollDirection = .horizontal
+        return collection
+    }()
+    
     private lazy var dayView: DetailsView = {
         let view = DetailsView(frame: UIScreen.main.bounds, title: "День")
-        view.updateUI(with: forecastModel)
         return view
     }()
     
     private lazy var nightView: DetailsView = {
         let view = DetailsView(frame: UIScreen.main.bounds, title: "Ночь")
-        view.updateUI(with: forecastModel)
         return view
     }()
     
@@ -37,8 +48,9 @@ class DayWeatherViewController: UIViewController {
         return view
     }()
     
-    init(forecastModel: ForecastWeatherModel) {
-        self.forecastModel = forecastModel
+    init(index: Int, forecastArray: [ForecastWeatherModel]) {
+        self.index = index
+        self.forecastArray = forecastArray
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -48,17 +60,52 @@ class DayWeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
-        title = forecastModel.date
+        title = forecastArray[index].timezone
+        updateUI(with: index)
         setupLayout()
     }
 }
 
+extension DayWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return forecastArray.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: DateCell.self), for: indexPath) as! DateCell
+        cell.updateUI(with: forecastArray[indexPath.item])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        updateUI(with: indexPath.item)
+        let cell = collectionView.cellForItem(at: indexPath) as! DateCell
+        if lastIndex != indexPath {
+            cell.isSelected(condition: true)
+            let cellTwo = collectionView.cellForItem(at: lastIndex) as? DateCell
+            cellTwo?.isSelected(condition: false)
+            lastIndex = indexPath
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width: CGFloat = collectionView.bounds.width / 4
+        return CGSize(width: width, height: 36)
+    }
+}
+
 extension DayWeatherViewController {
+    
+    func updateUI(with index: Int) {
+        dayView.updateUI(with: forecastArray[index])
+        nightView.updateUI(with: forecastArray[index])
+        sunAndMoonView.updateUI(with: forecastArray[index])
+    }
+    
     func setupLayout() {
         view.backgroundColor = .white
         view.addSubviews(scroll)
-        scroll.addSubviews(dayView, nightView, sunAndMoonView)
+        scroll.addSubviews(dateCollectionView, dayView, nightView, sunAndMoonView)
         
         scroll.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
@@ -66,8 +113,15 @@ extension DayWeatherViewController {
             make.width.equalTo(view.snp.width)
         }
         
+        dateCollectionView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(20)
+            make.width.equalTo(UIScreen.main.bounds.width - 30)
+            make.height.equalTo(45)
+            make.centerX.equalToSuperview()
+        }
+        
         dayView.snp.makeConstraints { make in
-            make.top.equalTo(scroll).offset(100)
+            make.top.equalTo(dateCollectionView.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
             make.width.equalTo(UIScreen.main.bounds.width - 30)
             make.height.equalTo(350)

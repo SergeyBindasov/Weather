@@ -217,7 +217,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let details = DayWeatherViewController(forecastModel: forecastArray[indexPath.row])
+        let details = DayWeatherViewController(index: indexPath.row, forecastArray: forecastArray)
         navigationController?.show(details, sender: nil)
     }
 }

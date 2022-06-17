@@ -241,11 +241,11 @@ extension DetailsView {
         layer.cornerRadius = 5
         addSubviews(topLabel, horizontalStack, descritionLabel, feelsLikeHorizontalStack, feelsLikeValue, windHorizontalStack, windValue, uvHorizontalStack, uvValue, rainHorizontalStack, rainValue, cloudHorizontalStack, cloudValue)
         
-        help.drawLineFromPoint(start: CGPoint(x: 0, y: 145), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 145), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
-        help.drawLineFromPoint(start: CGPoint(x: 0, y: 195), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 195), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
-        help.drawLineFromPoint(start: CGPoint(x: 0, y: 245), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 245), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
-        help.drawLineFromPoint(start: CGPoint(x: 0, y: 295), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 295), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
-        help.drawLineFromPoint(start: CGPoint(x: 0, y: 345), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 345), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 145), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 145), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self, opacity: 1, dash: false)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 195), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 195), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self, opacity: 1, dash: false)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 245), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 245), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self, opacity: 1, dash: false)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 295), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 295), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self, opacity: 1, dash: false)
+        help.drawLineFromPoint(start: CGPoint(x: 0, y: 345), toPoint: CGPoint(x: UIScreen.main.bounds.width - 30, y: 345), ofColor: UIColor(named: K.BrandColors.blue) ?? .blue, inView: self, opacity: 1, dash: false)
         
         topLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(15)

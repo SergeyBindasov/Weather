@@ -8,6 +8,7 @@
 import Foundation
 
 struct ForecastWeatherData: Codable {
+    let timezone: String
     var daily: [Daily]
 }
 
@@ -20,6 +21,10 @@ struct Daily: Codable {
     var windSpeed: Double
     var uvi: Double
     var clouds: Int
+    var sunrise: Double
+    var moonrise: Double
+    var sunset: Double
+    var moonset: Double
 }
 
 struct Temp: Codable {

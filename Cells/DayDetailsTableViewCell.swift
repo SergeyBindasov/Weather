@@ -22,7 +22,6 @@ class DayDetailsTableViewCell: UITableViewCell {
     
     private lazy var currentDate: UILabel = {
         let label = UILabel()
-        //label.text = "23/05"
         label.textColor = UIColor(named: K.BrandColors.blackText)
         label.font = UIFont(name: "Rubik-Medium", size: 18)
         return label
@@ -30,7 +29,6 @@ class DayDetailsTableViewCell: UITableViewCell {
     
     private lazy var currentTime: UILabel = {
         let label = UILabel()
-        //label.text = "12:00"
         label.textColor = UIColor(named: K.BrandColors.lightText)
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         return label
@@ -38,7 +36,6 @@ class DayDetailsTableViewCell: UITableViewCell {
     
     private lazy var temperature: UILabel = {
         let label = UILabel()
-        //label.text = "12"
         label.textColor = UIColor(named: K.BrandColors.blackText)
         label.font = UIFont(name: "Rubik-Medium", size: 18)
         return label
@@ -149,7 +146,6 @@ class DayDetailsTableViewCell: UITableViewCell {
     
     private lazy var feelsLikeResult: UILabel = {
         let label = UILabel()
-       // label.text = "2"
         label.textColor = UIColor(named: K.BrandColors.lightText)
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         return label
@@ -157,7 +153,6 @@ class DayDetailsTableViewCell: UITableViewCell {
     
     private lazy var windResult: UILabel = {
         let label = UILabel()
-        //label.text = "10 m/s"
         label.textColor = UIColor(named: K.BrandColors.lightText)
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         return label
@@ -165,7 +160,6 @@ class DayDetailsTableViewCell: UITableViewCell {
     
     private lazy var humidityResult: UILabel = {
         let label = UILabel()
-       // label.text = "16 %"
         label.textColor = UIColor(named: K.BrandColors.lightText)
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         return label
@@ -173,7 +167,6 @@ class DayDetailsTableViewCell: UITableViewCell {
     
     private lazy var cloudResult: UILabel = {
         let label = UILabel()
-        //label.text = "30 %"
         label.textColor = UIColor(named: K.BrandColors.lightText)
         label.font = UIFont(name: "Rubik-Regular", size: 14)
         return label

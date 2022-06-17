@@ -9,19 +9,26 @@ import Foundation
 
 struct ForecastWeatherModel {
     
-    var date: String
-    var conditionID: Int
-    var precipitation: String
-    var description: String
-    var dayTemp: String
-    var nightTemp: String
-    var feelsLikeDay: String
-    var feelsLikeNight: String
-    var minTemp: String
-    var maxTemp: String
-    var wind: String
-    var uvi: String
-    var cloud: String
+    let date: String
+    let conditionID: Int
+    let precipitation: String
+    let description: String
+    let dayTemp: String
+    let nightTemp: String
+    let feelsLikeDay: String
+    let feelsLikeNight: String
+    let minTemp: String
+    let maxTemp: String
+    let wind: String
+    let uvi: String
+    let cloud: String
+    let sunrise: String
+    let moonrise: String
+    let sunset: String
+    let moonset: String
+    let sunDayTime: String
+    let nightTime: String
+    let timezone: String
     
     var conditionName: String {
         switch conditionID {

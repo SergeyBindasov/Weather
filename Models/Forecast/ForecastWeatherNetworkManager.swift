@@ -67,7 +67,15 @@ class ForecastWeatherNetworkManager {
                                                      maxTemp: help.inCelcius(temp: day.temp.max),
                                                     wind: String(day.windSpeed),
                                                      uvi: String(day.uvi),
-                                                     cloud: String(day.clouds)
+                                                     cloud: String(day.clouds),
+                                                     sunrise: help.timeStringFromUnixTime(unixTime: day.sunrise),
+                                                     moonrise: help.timeStringFromUnixTime(unixTime: day.moonrise),
+                                                     sunset: help.timeStringFromUnixTime(unixTime: day.sunset),
+                                                     moonset: help.timeStringFromUnixTime(unixTime: day.moonset),
+                                                     sunDayTime: help.timeDifference(rise: day.sunrise, set: day.sunset),
+                                                     nightTime: help.timeDifference(rise: day.moonrise, set: day.moonset),
+                                                     timezone: decodedData.timezone
+                                            
                     )
 
                     models.append(model)
