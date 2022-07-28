@@ -10,12 +10,12 @@ import UIKit
 import SnapKit
 import Charts
 
-class HourForecastViewController: UIViewController {
+class ThreeHourForecastViewController: UIViewController {
     
     var city: CityCoordintes
     
     var dailyWeatherArray = [DayDetailsModel]()
-    var network = DayDetailsNetworkManager()
+    var network = HourlyDetailsNetworkManager()
 
     var entries = [ChartDataEntry]()
     
@@ -53,8 +53,7 @@ class HourForecastViewController: UIViewController {
         chartView.delegate = self
         chartView.xAxis.drawGridLinesEnabled = false
         chartView.leftAxis.drawAxisLineEnabled = false
-        chartView.leftAxis.axisMinimum = -15
-        chartView.leftAxis.axisMaximum = 40
+        
         chartView.xAxis.labelFont = UIFont(name: "Rubik-Regular", size: 10) ?? .systemFont(ofSize: 10)
         chartView.leftAxis.labelFont = UIFont(name: "Rubik-Regular", size: 10) ?? .systemFont(ofSize: 10)
         chartView.xAxis.labelPosition = .bottom
@@ -66,8 +65,15 @@ class HourForecastViewController: UIViewController {
         chartView.animate(xAxisDuration: 1.5)
         chartView.leftAxis.granularity = 15
         chartView.rightAxis.enabled = false
-        chartView.backgroundColor = UIColor(named: K.BrandColors.lightBlue)
+        chartView.backgroundColor = .white
         chartView.xAxis.valueFormatter = DateValueFormatter()
+        if UserDefaults.standard.bool(forKey: "temp") == true {
+            chartView.leftAxis.axisMinimum = -15
+            chartView.leftAxis.axisMaximum = 40
+        } else {
+            chartView.leftAxis.axisMinimum = 0
+            chartView.leftAxis.axisMaximum = 105
+        }
         return chartView
     }()
     
@@ -77,12 +83,14 @@ class HourForecastViewController: UIViewController {
         table.register(DayDetailsTableViewCell.self, forCellReuseIdentifier: String(describing: DayDetailsTableViewCell.self))
         table.dataSource = self
         table.delegate = self
+        table.isScrollEnabled = false
         table.separatorColor = UIColor(named: K.BrandColors.blue)
         return table
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Прогноз на 24 часа"
         network.fetchWeatherBy(latitude: city.latitude, longitude: city.longitude)
         network.delegate = self
         setupLayout()
@@ -90,12 +98,12 @@ class HourForecastViewController: UIViewController {
 }
                                     }
 
-extension HourForecastViewController: ChartViewDelegate {
+extension ThreeHourForecastViewController: ChartViewDelegate {
     
    
 }
 
-extension HourForecastViewController: UITableViewDataSource, UITableViewDelegate {
+extension ThreeHourForecastViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         dailyWeatherArray.count
     }
@@ -108,8 +116,8 @@ extension HourForecastViewController: UITableViewDataSource, UITableViewDelegate
     
 }
 
-extension HourForecastViewController: DayDetailsWeatherDelegate {
-    func didUpdateDayDetailsWeather(_ weatherManager: DayDetailsNetworkManager, weather: [DayDetailsModel]) {
+extension ThreeHourForecastViewController: DayDetailsWeatherDelegate {
+    func didUpdateDayDetailsWeather(_ weatherManager: HourlyDetailsNetworkManager, weather: [DayDetailsModel]) {
        
         DispatchQueue.main.async {
             for weather in weather {
@@ -144,7 +152,7 @@ extension HourForecastViewController: DayDetailsWeatherDelegate {
 
 
 
-extension HourForecastViewController {
+extension ThreeHourForecastViewController {
     
  func setupLayout() {
      view.backgroundColor = .white
@@ -160,7 +168,8 @@ extension HourForecastViewController {
      
      mainView.snp.makeConstraints { make in
          make.edges.equalToSuperview()
-         make.width.height.equalToSuperview()
+         make.width.equalToSuperview()
+         make.height.equalTo(1400)
      }
            
        

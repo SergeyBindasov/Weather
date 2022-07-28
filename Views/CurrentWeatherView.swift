@@ -11,7 +11,7 @@ import SnapKit
 
 class CurrentWeatherView: UIView {
     
-    let measurment = Help()
+    let help = Help()
     
     private lazy var cityLabel: UILabel = {
        var label = UILabel()
@@ -212,15 +212,37 @@ extension CurrentWeatherView {
     
     func updateCurrentWeatherUI(with weather: WeatherModel) {
         cityLabel.text = weather.cityName
-        sunriseTimeLabel.text = weather.sunrise
-        sunsetTimeLabel.text = weather.sunset
-        minTempLabel.text = weather.minTemp + " " + "/"
-        maxTempLabel.text = " " + weather.maxTemp
-        currentTemperatureLabel.text = weather.currentTemp
+        sunriseTimeLabel.text = help.timeStringFromUnixTime(unixTime: weather.sunrise)
+        sunsetTimeLabel.text =  help.timeStringFromUnixTime(unixTime: weather.sunset)
+       if UserDefaults.standard.bool(forKey: "temp") == true {
+            minTempLabel.text = help.inCelcius(temp: weather.minTemp) + " " + "/"
+            maxTempLabel.text = " " + help.inCelcius(temp:weather.maxTemp)
+            currentTemperatureLabel.text = help.inCelcius(temp: weather.currentTemp)
+           if UserDefaults.standard.bool(forKey: "speed") == true {
+               windText.text = String(help.inMilesPerHour(speed: weather.windSpeed)) + " " + "mph"
+           } else {
+            windText.text = String(weather.windSpeed) + " " + "ms"
+           }
+        } else {
+            minTempLabel.text = help.inFahrenheit(temp: weather.minTemp) + " " + "/"
+            maxTempLabel.text = " " + help.inFahrenheit(temp:weather.maxTemp)
+            currentTemperatureLabel.text = help.inFahrenheit(temp: weather.currentTemp)
+            if UserDefaults.standard.bool(forKey: "speed") == false {
+                windText.text = String(help.inMetersPerSecond(speed: weather.windSpeed)) + " " + "ms"
+            } else {
+                windText.text = String(weather.windSpeed) + " " + "mph"
+            }
+        }
+    
+       
+
+        
+        
         descriptionLabel.text = weather.description.firstUppercased
-        cloudText.text = weather.cloudiness
-        windText.text = weather.windSpeed + " " + "м/c"
-        dropsText.text = weather.humidity + " " + "%"
+        cloudText.text = String(weather.cloudiness)
+        dropsText.text = String(weather.humidity) + " " + "%"
+        
+
         }
         
     

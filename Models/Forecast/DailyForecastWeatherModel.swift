@@ -7,19 +7,19 @@
 
 import Foundation
 
-struct ForecastWeatherModel {
+struct DailyForecastWeatherModel {
     
     let date: String
     let conditionID: Int
     let precipitation: String
     let description: String
-    let dayTemp: String
-    let nightTemp: String
-    let feelsLikeDay: String
-    let feelsLikeNight: String
-    let minTemp: String
-    let maxTemp: String
-    let wind: String
+    let dayTemp: Double //String
+    let nightTemp: Double //String
+    let feelsLikeDay: Double //String
+    let feelsLikeNight: Double // String
+    let minTemp: Double //String
+    let maxTemp: Double //String
+    let wind: Double//String
     let uvi: String
     let cloud: String
     let sunrise: String
@@ -29,6 +29,8 @@ struct ForecastWeatherModel {
     let sunDayTime: String
     let nightTime: String
     let timezone: String
+    let lat: Double
+    let lon: Double
     
     var conditionName: String {
         switch conditionID {

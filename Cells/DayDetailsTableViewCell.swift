@@ -202,7 +202,15 @@ extension DayDetailsTableViewCell {
         currentDate.text = weather.date
         currentTime.text = help.timeStringFromUnixTime(unixTime: weather.time) 
         temperature.text = help.inCelcius(temp: weather.currentTemp)
-        feelsLikeResult.text = weather.feelsLikeTemp
+        if UserDefaults.standard.bool(forKey: "temp") == true {
+            temperature.text = help.inCelcius(temp: weather.currentTemp)
+            feelsLikeResult.text =  help.inCelcius(temp:weather.feelsLikeTemp)
+            
+        } else {
+            temperature.text = help.inFahrenheit(temp: weather.currentTemp)
+            feelsLikeResult.text =  help.inFahrenheit(temp:weather.feelsLikeTemp)
+        }
+        //feelsLikeResult.text = weather.feelsLikeTemp
         windResult.text = weather.wind + " " + "м/c"
         humidityResult.text = weather.humidity + "%"
         cloudResult.text = weather.cloud + "%"

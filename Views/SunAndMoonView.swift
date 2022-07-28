@@ -138,7 +138,7 @@ class SunAndMoonView: UIView {
 }
 
 extension SunAndMoonView {
-    func updateUI(with weather: ForecastWeatherModel) {
+    func updateUI(with weather: DailyForecastWeatherModel) {
         sunriseValue.text = weather.sunrise
         moonriseValue.text = weather.moonrise
         sunsetValue.text = weather.sunset
@@ -178,7 +178,7 @@ extension SunAndMoonView {
         }
         
         moonHorStack.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-15)
+            make.leading.equalTo((UIScreen.main.bounds.width / 2) + 15)
             make.centerY.equalTo(sunHorStack.snp.centerY)
         }
         

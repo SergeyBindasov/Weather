@@ -7,9 +7,11 @@
 
 import Foundation
 
-struct ForecastWeatherData: Codable {
+struct DailyForecastWeatherData: Codable {
     let timezone: String
     var daily: [Daily]
+    let lat: Double
+    let lon: Double
 }
 
 struct Daily: Codable {

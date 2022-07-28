@@ -10,13 +10,13 @@ import Foundation
 struct WeatherModel {
     var cityName: String
     var conditionId: Int
-    var sunrise: String
-    var sunset: String
-    var minTemp: String
-    var maxTemp: String
-    var currentTemp: String
+    var sunrise: Double //String
+    var sunset: Double // String
+    var minTemp: Double//String
+    var maxTemp: Double //String
+    var currentTemp: Double //String
     var description: String
-    var cloudiness: String
-    var windSpeed: String
-    var humidity: String
+    var cloudiness: Int//String
+    var windSpeed: Double//String
+    var humidity: Int//String
 }

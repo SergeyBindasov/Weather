@@ -13,11 +13,7 @@ class ThreeHourWeatherNetworkManager {
     
     let help = Help()
     
-    var temp: String = ""
-    var time: String = ""
-    var id: Int = 0
-    
-    let threeHourForecaetUrl = "https://api.openweathermap.org/data/2.5/forecast?&appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&cnt=8&units=metric"
+    let threeHourForecaetUrl = "https://api.openweathermap.org/data/2.5/forecast?&appid=15155ae34e7dd30a88d9313e93a5b681&lang=ru&cnt=8"
     
     func fetchThreeHourWeatherBy(cityName: String) {
         let urlString = "\(threeHourForecaetUrl)&q=\(cityName)"
@@ -26,7 +22,7 @@ class ThreeHourWeatherNetworkManager {
     }
     
     func fetchWeatherBy(latitude: Double, longitude: Double) {
-        let urlString = "\(threeHourForecaetUrl)&lat=\(latitude)&lon=\(longitude)"
+        let urlString = "\(help.setupString(url: threeHourForecaetUrl))&lat=\(latitude)&lon=\(longitude)"
         performHourRequest(with: urlString)
     }
     
@@ -39,6 +35,7 @@ class ThreeHourWeatherNetworkManager {
                 }
                 if let safeData = data {
                     if let weather = self.parseHourJSON(weatherData: safeData) {
+                     
                         DispatchQueue.main.async {
                             self.delegate?.didUpdateHourWeather(self, weather: weather)
                         }
@@ -55,15 +52,12 @@ class ThreeHourWeatherNetworkManager {
         do {
             var models = [ThreeHourWeatherModel]()
             let decodedData = try decoder.decode(ThreeHourWeatherData.self, from: weatherData)
-            var model = ThreeHourWeatherModel(time: time, conditionID: id, temp: temp)
+         
             decodedData.list.forEach { list in
-                self.time = help.timeStringFromUnixTime(unixTime: list.dt)
-                self.temp = help.inCelcius(temp: list.main.temp)
                 list.weather.forEach { weather in
-                    self.id = weather.id
-                    model.time = time
-                    model.conditionID = id
-                    model.temp = temp
+                    let model = ThreeHourWeatherModel(time: help.timeStringFromUnixTime(unixTime: list.dt),
+                                                      conditionID: weather.id,
+                                                      temp:list.main.temp)
                     models.append(model)
                 }
             }

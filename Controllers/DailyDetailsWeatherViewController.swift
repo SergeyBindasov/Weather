@@ -9,11 +9,12 @@ import Foundation
 import UIKit
 import SnapKit
 
-class DayWeatherViewController: UIViewController {
+class DailyDetailsWeatherViewController: UIViewController {
     
     var index: Int
-    var forecastArray: [ForecastWeatherModel]
+    var forecastArray: [DailyForecastWeatherModel]
     var lastIndex: IndexPath = [1,0]
+    let pollutionManager = PollutionNetworkManager()
     
     private lazy var scroll: UIScrollView = {
         let scroll = UIScrollView()
@@ -33,13 +34,13 @@ class DayWeatherViewController: UIViewController {
         return collection
     }()
     
-    private lazy var dayView: DetailsView = {
-        let view = DetailsView(frame: UIScreen.main.bounds, title: "День")
+    private lazy var dayView: DailyDetailsView = {
+        let view = DailyDetailsView(frame: UIScreen.main.bounds, title: "День")
         return view
     }()
     
-    private lazy var nightView: DetailsView = {
-        let view = DetailsView(frame: UIScreen.main.bounds, title: "Ночь")
+    private lazy var nightView: DailyDetailsView = {
+        let view = DailyDetailsView(frame: UIScreen.main.bounds, title: "Ночь")
         return view
     }()
     
@@ -48,7 +49,14 @@ class DayWeatherViewController: UIViewController {
         return view
     }()
     
-    init(index: Int, forecastArray: [ForecastWeatherModel]) {
+    private lazy var pollutionView: PollutionView = {
+        let view = PollutionView()
+        return view
+    }()
+    
+    
+    
+    init(index: Int, forecastArray: [DailyForecastWeatherModel]) {
         self.index = index
         self.forecastArray = forecastArray
         super.init(nibName: nil, bundle: nil)
@@ -61,12 +69,15 @@ class DayWeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = forecastArray[index].timezone
+        pollutionManager.delegate = self
         updateUI(with: index)
+        checkPollution()
         setupLayout()
+        
     }
 }
 
-extension DayWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension DailyDetailsWeatherViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return forecastArray.count
     }
@@ -74,12 +85,14 @@ extension DayWeatherViewController: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: DateCell.self), for: indexPath) as! DateCell
         cell.updateUI(with: forecastArray[indexPath.item])
+     
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         updateUI(with: indexPath.item)
         let cell = collectionView.cellForItem(at: indexPath) as! DateCell
+    
         if lastIndex != indexPath {
             cell.isSelected(condition: true)
             let cellTwo = collectionView.cellForItem(at: lastIndex) as? DateCell
@@ -94,7 +107,15 @@ extension DayWeatherViewController: UICollectionViewDelegate, UICollectionViewDa
     }
 }
 
-extension DayWeatherViewController {
+extension DailyDetailsWeatherViewController: PollutionManagerDelegate {
+    func didUpdatePollution(_ weatherManager: PollutionNetworkManager, weather: PollutionModel) {
+        pollutionView.updateUI(with: weather)
+    }
+    
+    
+}
+
+extension DailyDetailsWeatherViewController {
     
     func updateUI(with index: Int) {
         dayView.updateUI(with: forecastArray[index])
@@ -102,10 +123,17 @@ extension DayWeatherViewController {
         sunAndMoonView.updateUI(with: forecastArray[index])
     }
     
+    func checkPollution() {
+       
+            pollutionManager.getPollution(latitude: forecastArray[index].lat, longitude: forecastArray[index].lon)
+        
+    }
+    
     func setupLayout() {
         view.backgroundColor = .white
         view.addSubviews(scroll)
-        scroll.addSubviews(dateCollectionView, dayView, nightView, sunAndMoonView)
+       
+        scroll.addSubviews(dateCollectionView, dayView, nightView, sunAndMoonView, pollutionView)
         
         scroll.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
@@ -138,7 +166,14 @@ extension DayWeatherViewController {
             make.top.equalTo(nightView.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
             make.width.equalTo(UIScreen.main.bounds.width - 30)
-            make.height.equalTo(350)
+            make.height.equalTo(150)
+          
+        }
+        pollutionView.snp.makeConstraints { make in
+            make.top.equalTo(sunAndMoonView.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(UIScreen.main.bounds.width - 30)
+            make.height.equalTo(160)
             make.bottom.equalToSuperview()
         }
     }

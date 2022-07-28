@@ -9,7 +9,7 @@ import Foundation
 
 
 protocol WeatherManagerDelegate {
-    func didUpdateWeather(_ weatherManager: WeatherNetworkManager, weather: WeatherModel)
+    func didUpdateWeather(_ weatherManager: CurrentWeatherNetworkManager, weather: WeatherModel)
 }
 
 protocol GeocodingManagerDelegate {
@@ -21,10 +21,15 @@ protocol ThreeHourWeatherDelegate {
 }
 
 protocol ForecastWeatherDelegate {
-    func didUpdateForecastWeather(_ weatherManager: ForecastWeatherNetworkManager, weather: [ForecastWeatherModel])
+    func didUpdateForecastWeather(_ weatherManager: DailyForecastWeatherNetworkManager, weather: [DailyForecastWeatherModel])
     
 }
 
 protocol DayDetailsWeatherDelegate {
-    func didUpdateDayDetailsWeather(_ weatherManager: DayDetailsNetworkManager, weather: [DayDetailsModel])
+    func didUpdateDayDetailsWeather(_ weatherManager: HourlyDetailsNetworkManager, weather: [DayDetailsModel])
 }
+
+protocol PollutionManagerDelegate {
+    func didUpdatePollution(_ weatherManager: PollutionNetworkManager, weather: PollutionModel)
+}
+

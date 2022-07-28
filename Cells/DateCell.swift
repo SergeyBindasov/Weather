@@ -30,7 +30,7 @@ class DateCell: UICollectionViewCell {
 
 extension DateCell {
     
-    func updateUI(with date: ForecastWeatherModel) {
+    func updateUI(with date: DailyForecastWeatherModel) {
         dateLabel.text = date.date
     }
     

@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import SnapKit
-import CoreLocation
 import RealmSwift
 
 class MainViewController: UIViewController {
@@ -16,19 +15,19 @@ class MainViewController: UIViewController {
     
     let realm = try! Realm()
     
-    var cities: Results<CityCoordintes>?
+    //var cities: Results<CityCoordintes>?
     
-    var controllers: [UIViewController] = []
-    var currentCity: Int? = 0
-    var myArray = [ThreeHourWeatherModel]()
-    var forecastArray = [ForecastWeatherModel]()
+    var currentWeatherControllersArray: [UIViewController] = []
+    var currentCityIndex: Int? //= 0
+    var threeHourForecastArray = [ThreeHourWeatherModel]()
+    var dailyForecastArray = [DailyForecastWeatherModel]()
     
-    var pageController: UIPageViewController!
+    var pageViewController: UIPageViewController!
     var pageControl = UIPageControl()
     
-    let threeHourNetwork = ThreeHourWeatherNetworkManager()
-    let forecast = ForecastWeatherNetworkManager()
-    var geo = GeocodingRequest()
+    let threeHourForecastNetworkMangaer = ThreeHourWeatherNetworkManager()
+    let dailyForecastNetworkManager = DailyForecastWeatherNetworkManager()
+    var geocodingNetworkManager = GeocodingRequest()
     
     private lazy var scroll: UIScrollView = {
         let scroll = UIScrollView()
@@ -45,7 +44,7 @@ class MainViewController: UIViewController {
     private lazy var dailyWeatherCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.register(DailyWeatherCell.self, forCellWithReuseIdentifier: String(describing: DailyWeatherCell.self))
+        collection.register(ThreeHourForecastWeatherCell.self, forCellWithReuseIdentifier: String(describing: ThreeHourForecastWeatherCell.self))
         collection.delegate = self
         collection.dataSource = self
         collection.showsHorizontalScrollIndicator = false
@@ -59,12 +58,13 @@ class MainViewController: UIViewController {
     
     private lazy var forecastTableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
-        tv.register(ForecastTableViewCell.self, forCellReuseIdentifier: String(describing: ForecastTableViewCell.self))
+        tv.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: String(describing: DailyForecastTableViewCell.self))
         tv.dataSource = self
         tv.delegate = self
         tv.backgroundColor = .white
         tv.separatorStyle = .none
         tv.showsVerticalScrollIndicator = false
+        tv.isScrollEnabled = false
         return tv
     }()
     
@@ -94,7 +94,7 @@ class MainViewController: UIViewController {
         let label = UILabel()
         label.textColor = UIColor(named: K.BrandColors.blackText)
         label.text = "Ежедневный прогноз"
-        label.font = UIFont(name: "Rubik-Regular", size: 18)
+        label.font = UIFont(name: "Rubik-Medium", size: 18)
         return label
     }()
     
@@ -104,16 +104,18 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         print(Realm.Configuration.defaultConfiguration.fileURL!)
         // NETWORK
-        geo.delegate = self
-        threeHourNetwork.delegate = self
-        forecast.delegate = self
+        geocodingNetworkManager.delegate = self
+        threeHourForecastNetworkMangaer.delegate = self
+        dailyForecastNetworkManager.delegate = self
         
-        createCurrentWeatherVC()
-        //loadForecast(at: currentCity)
+        ifNoPlacesYet()
+        
+        //createCurrentWeatherVC()
+       //loadForecast(at: currentCity)
         
         // Layout
-        setupPageController()
-        setupLayout()
+        //setupPageController()
+        //setupLayout()
         
         
         // Tap
@@ -130,14 +132,18 @@ class MainViewController: UIViewController {
     
     @objc func dailyTapped(sender:UITapGestureRecognizer) {
         let array = Array(realm.objects(CityCoordintes.self))
-        if let cityIndex = currentCity {
-        let day = HourForecastViewController(city: array[cityIndex])
+        if let cityIndex = currentCityIndex {
+        let day = ThreeHourForecastViewController(city: array[cityIndex])
         show(day, sender: nil)
         }
     }
     
     @objc func monthTapped(sender:UITapGestureRecognizer) {
         monthClickLabel.textColor = .red
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
     }
 }
 
@@ -151,7 +157,7 @@ extension MainViewController: GeocodingManagerDelegate {
             newCity.longitude = model.longitude
             self.saveCity(city: newCity)
             let newCityVC = CurrentWeatherViewController(cityName: newCity.cityName, latitude: newCity.latitude, longitude: newCity.longitude)
-            self.controllers.append(newCityVC)
+            self.currentWeatherControllersArray.append(newCityVC)
             self.updateDotsCount()
         }
     }
@@ -161,7 +167,7 @@ extension MainViewController: ThreeHourWeatherDelegate {
     func didUpdateHourWeather(_ weatherManager: ThreeHourWeatherNetworkManager, weather: [ThreeHourWeatherModel]) {
         DispatchQueue.main.async {
             for w in weather {
-                self.myArray.append(w)
+                self.threeHourForecastArray.append(w)
                 self.dailyWeatherCollection.reloadData()
             }
         }
@@ -169,10 +175,10 @@ extension MainViewController: ThreeHourWeatherDelegate {
 }
 
 extension MainViewController: ForecastWeatherDelegate {
-    func didUpdateForecastWeather(_ weatherManager: ForecastWeatherNetworkManager, weather: [ForecastWeatherModel]) {
+    func didUpdateForecastWeather(_ weatherManager: DailyForecastWeatherNetworkManager, weather: [DailyForecastWeatherModel]) {
         DispatchQueue.main.async {
             for w in weather {
-                self.forecastArray.append(w)
+                self.dailyForecastArray.append(w)
                 self.forecastTableView.reloadData()
             }
         }
@@ -183,18 +189,18 @@ extension MainViewController: ForecastWeatherDelegate {
 //MARK: - CollectionViewMethods
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return myArray.count
+        return threeHourForecastArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = dailyWeatherCollection.dequeueReusableCell(withReuseIdentifier: String(describing: DailyWeatherCell.self), for: indexPath) as! DailyWeatherCell
+        let cell = dailyWeatherCollection.dequeueReusableCell(withReuseIdentifier: String(describing: ThreeHourForecastWeatherCell.self), for: indexPath) as! ThreeHourForecastWeatherCell
         
-        cell.updateWeather(with: myArray[indexPath.item])
+        cell.updateWeather(with: threeHourForecastArray[indexPath.item])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! DailyWeatherCell
+        let cell = collectionView.cellForItem(at: indexPath) as! ThreeHourForecastWeatherCell
         cell.isTapped()
     }
     
@@ -202,12 +208,12 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
 //MARK: - TableViewMethods
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return forecastArray.count
+        return dailyForecastArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ForecastTableViewCell.self), for: indexPath) as! ForecastTableViewCell
-        cell.updateWeather(with: forecastArray[indexPath.row])
+        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: DailyForecastTableViewCell.self), for: indexPath) as! DailyForecastTableViewCell
+        cell.updateWeather(with: dailyForecastArray[indexPath.row])
         return cell
     }
     
@@ -217,7 +223,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let details = DayWeatherViewController(index: indexPath.row, forecastArray: forecastArray)
+        let details = DailyDetailsWeatherViewController(index: indexPath.row, forecastArray: dailyForecastArray)
         navigationController?.show(details, sender: nil)
     }
 }
@@ -228,37 +234,39 @@ extension MainViewController: UIPageViewControllerDelegate, UIPageViewController
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
-            if let currentViewController = pageViewController.viewControllers?.first, let index = controllers.firstIndex(of: currentViewController) {
-                currentCity = index
+            if let currentViewController = pageViewController.viewControllers?.first, let index = currentWeatherControllersArray.firstIndex(of: currentViewController) {
+                currentCityIndex = index
                 pageControl.currentPage = index
             }
         }
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        if let index = controllers.firstIndex(of: viewController) {
+        if let index = currentWeatherControllersArray.firstIndex(of: viewController) {
             
-            currentCity = Int(index)
+            currentCityIndex = Int(index)
             /// ПРОБЛЕМА С ДВОЙНОЙ ПОДГРУЗКОЙ ДАННЫХ ПРИ СВАЙПЕ НАЗАД
             updateTables()
-            loadForecast(at: currentCity)
-            print("move back \(String(describing: currentCity))" )
+            
+           loadForecast(at: currentCityIndex)
+            print("move back \(String(describing: currentCityIndex))" )
             if index > 0 {
-                return controllers[index - 1]
+                return currentWeatherControllersArray[index - 1]
             } else { return nil }
         }
         return nil
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        if let index = controllers.firstIndex(of: viewController) {
+        if let index = currentWeatherControllersArray.firstIndex(of: viewController) {
             if index > 0 {
-                print("move foreward \(String(describing: currentCity))" )
+                print("move foreward \(String(describing: currentCityIndex))" )
                 updateTables()
-                loadForecast(at: currentCity)
+               
+                loadForecast(at: currentCityIndex)
             }
-            if index < controllers.count - 1 {
-                return controllers[index + 1]
+            if index < currentWeatherControllersArray.count - 1 {
+                return currentWeatherControllersArray[index + 1]
             } else { return nil }
         }
         return nil
@@ -277,41 +285,43 @@ extension MainViewController {
             print("ошибка при сохранении города \(error)")
         }
     }
-    
+
     func loadForecast(at index: Int?) {
         let array = realm.objects(CityCoordintes.self)
         do {
-            
-                if let index = currentCity {
-                    threeHourNetwork.fetchWeatherBy(latitude: array[index].latitude, longitude: array[index].longitude)
-                    forecast.fetchWeatherBy(latitude: array[index].latitude, longitude: array[index].longitude)
+            //currentCity = 0
+                if let index = currentCityIndex {
+                    threeHourForecastNetworkMangaer.fetchWeatherBy(latitude: array[index].latitude, longitude: array[index].longitude)
+                    dailyForecastNetworkManager.fetchWeatherBy(latitude: array[index].latitude, longitude: array[index].longitude)
             }
-            
-        } catch {
-            print("ошибка при загрузке погоды в таблицы \(error)")
-        }
+//
+//        } catch {
+//            print("ошибка при загрузке погоды в таблицы \(error)")
+       }
     }
-    
+
     func createCurrentWeatherVC() -> [UIViewController]? {
         let array = realm.objects(CityCoordintes.self)
         do {
-            if array.count == 0 {
-                let addVC = AddViewController()
-                self.controllers.append(addVC)
-                hideUIelements()
-                
-            } else {
-                
+//            if array.count == 0 {
+//                let addVC = AddViewController()
+//
+//                self.controllers.append(addVC)
+//                hideUIelements()
+//
+//            } else {
+            currentCityIndex = 0
                 array.forEach { place in
                     let newCity = CurrentWeatherViewController(cityName: place.cityName, latitude: place.latitude, longitude: place.longitude)
-                    self.controllers.append(newCity)
-                    loadForecast(at: 0)
+                    self.currentWeatherControllersArray.append(newCity)
+
                 }
+            loadForecast(at: currentCityIndex)
             }
-        } catch {
-            print("ошибка при создании CurrentWeatherVC \(error)")
-        }
-        return controllers
+//        } catch {
+//            print("ошибка при создании CurrentWeatherVC \(error)")
+//        }
+        return currentWeatherControllersArray
     }
 
     /// ACTIONS
@@ -330,8 +340,7 @@ extension MainViewController {
         
         let action = UIAlertAction(title: "Оk", style: .cancel) { action in
             guard let textfields = alert.textFields, let cityFromTF = textfields[0].text else { return }
-            self.geo.getCityCoordinatesBy(name: cityFromTF)
-           
+            self.geocodingNetworkManager.getCityCoordinatesBy(name: cityFromTF)
             self.dismiss(animated: true, completion: nil)
         }
         let decline = UIAlertAction(title: "Отмена", style: .default) { action in
@@ -350,30 +359,44 @@ extension MainViewController {
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.hidesForSinglePage = true
         pageControl.currentPage = 0
-        pageController = UIPageViewController(transitionStyle: .scroll , navigationOrientation: .horizontal, options: nil)
-        pageController.dataSource = self
-        pageController.delegate = self
-        addChild(pageController)
+        pageViewController = UIPageViewController(transitionStyle: .scroll , navigationOrientation: .horizontal, options: nil)
+        pageViewController.dataSource = self
+        pageViewController.delegate = self
+        addChild(pageViewController)
         
-        pageController.setViewControllers([controllers[0]], direction: .forward, animated: false)
+        pageViewController.setViewControllers([currentWeatherControllersArray[0]], direction: .forward, animated: false)
     }
     
     func updateDotsCount() {
-        pageControl.numberOfPages = controllers.count
+        pageControl.numberOfPages = currentWeatherControllersArray.count
     }
     
     /// UI
-    func hideUIelements() {
-        dailyClickLabel.isHidden = true
-        monthLabel.isHidden = true
-        monthClickLabel.isHidden = true
-        dailyWeatherCollection.isHidden = true
-        forecastTableView.isHidden = true
+    
+    func ifNoPlacesYet() {
+        let array = realm.objects(CityCoordintes.self)
+        if array.count == 0 {
+            view = AddCityView()
+        
+        } else {
+            createCurrentWeatherVC()
+            setupPageController()
+            setupLayout()
+        }
     }
+    
+    
+//    func hideUIelements() {
+//        dailyClickLabel.isHidden = true
+//        monthLabel.isHidden = true
+//        monthClickLabel.isHidden = true
+//        dailyWeatherCollection.isHidden = true
+//        forecastTableView.isHidden = true
+//    }
   
     func updateTables() {
-        myArray = []
-        forecastArray = []
+        threeHourForecastArray = []
+        dailyForecastArray = []
         dailyWeatherCollection.reloadData()
         forecastTableView.reloadData()
     }
@@ -381,7 +404,7 @@ extension MainViewController {
     func setupLayout() {
         view.addSubviews(scroll)
         scroll.addSubviews(mainView)
-        mainView.addSubviews(pageController.view, pageControl, dailyClickLabel, dailyWeatherCollection, monthLabel, monthClickLabel, forecastTableView)
+        mainView.addSubviews(pageViewController.view, pageControl, dailyClickLabel, dailyWeatherCollection, monthLabel, monthClickLabel, forecastTableView)
         
         scroll.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
@@ -391,10 +414,11 @@ extension MainViewController {
         
         mainView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.width.height.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(1050)
         }
         
-        pageController.view.snp.makeConstraints { make in
+        pageViewController.view.snp.makeConstraints { make in
             make.top.equalTo(pageControl.snp.bottom).offset(5)
             make.leading.equalTo(mainView).offset(16)
             make.trailing.equalTo(mainView).offset(-16)
@@ -406,7 +430,7 @@ extension MainViewController {
         }
         
         dailyClickLabel.snp.makeConstraints { make in
-            make.top.equalTo(pageController.view.snp.bottom).offset(16)
+            make.top.equalTo(pageViewController.view.snp.bottom).offset(16)
             make.trailing.equalTo(mainView).offset(-16)
         }
         
@@ -430,7 +454,7 @@ extension MainViewController {
         forecastTableView.snp.makeConstraints { make in
             make.leading.equalTo(mainView).offset(16)
             make.trailing.equalTo(mainView).offset(-16)
-            make.top.equalTo(monthClickLabel.snp.bottom).offset(10)
+            make.top.equalTo(monthClickLabel.snp.bottom).offset(5)
             make.bottom.equalTo(mainView)
         }
     }

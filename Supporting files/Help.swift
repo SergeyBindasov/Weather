@@ -30,6 +30,18 @@ struct Help {
         return measurementFormatter.string(from: measurement)
     }
     
+    func inMilesPerHour(speed: Double) -> Double {
+        let imperialSpeed = speed * 2.237
+        let rounded = imperialSpeed.rounded()
+        return rounded
+    }
+    
+    func inMetersPerSecond(speed: Double) -> Double {
+        let metricSpeed = speed / 2.237
+        let rounded = metricSpeed.rounded()
+        return rounded
+    }
+    
     func timeStringFromUnixTime(unixTime: Double) -> String {
         let date = Date(timeIntervalSince1970: unixTime)
         formatter.dateFormat = "HH:mm"
@@ -73,4 +85,18 @@ struct Help {
         
         view.layer.addSublayer(shapeLayer)
     }
+    
+    
+    func setupString(url: String) -> String {
+        if UserDefaults.standard.bool(forKey: "temp") == true {
+           return "\(url)&units=metric"
+        } else {
+            return "\(url)&units=imperial"
+        }
+    }
+    
+    
+    
+    
+    
 }

@@ -12,7 +12,7 @@ struct DayDetailsModel {
     var date: String
     var time: Double
     var currentTemp: Double
-    var feelsLikeTemp: String
+    var feelsLikeTemp: Double
     var wind: String
     var cloud: String
     var humidity: String

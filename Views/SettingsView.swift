@@ -101,44 +101,44 @@ class SettingsView: UIView {
     private lazy var temperatureSegmtControl: UISegmentedControl = {
         let tempArray = ["C", "F"]
         let control = UISegmentedControl(items: tempArray)
-        control.selectedSegmentIndex = 0
+        //control.selectedSegmentIndex = 0
         control.backgroundColor = UIColor(named: K.BrandColors.segment)
         control.selectedSegmentTintColor = UIColor(named: K.BrandColors.blue)
         control.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-        
+        control.addTarget(self, action: #selector(temperatueChanged), for: .valueChanged)
         return control
     }()
     
     private lazy var windSegmtControl: UISegmentedControl = {
         let windArray = ["Mi", "Km"]
         let control = UISegmentedControl(items: windArray)
-        control.selectedSegmentIndex = 1
+        //control.selectedSegmentIndex = 1
         control.backgroundColor = UIColor(named: K.BrandColors.segment)
         control.selectedSegmentTintColor = UIColor(named: K.BrandColors.blue)
         control.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-        
+        control.addTarget(self, action: #selector(windChanged), for: .valueChanged)
         return control
     }()
     
     private lazy var timeSegmtControl: UISegmentedControl = {
         let timeArray = ["12", "24"]
         let control = UISegmentedControl(items: timeArray)
-        control.selectedSegmentIndex = 1
+        //control.selectedSegmentIndex = 1
         control.backgroundColor = UIColor(named: K.BrandColors.segment)
         control.selectedSegmentTintColor = UIColor(named: K.BrandColors.blue)
         control.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-        
+        control.addTarget(self, action: #selector(timeChanged), for: .valueChanged)
         return control
     }()
     
     private lazy var notificationSegmtControl: UISegmentedControl = {
         let notificationArray = ["On", "Off"]
         let control = UISegmentedControl(items: notificationArray)
-        control.selectedSegmentIndex = 1
+        //control.selectedSegmentIndex = 1
         control.backgroundColor = UIColor(named: K.BrandColors.segment)
         control.selectedSegmentTintColor = UIColor(named: K.BrandColors.blue)
         control.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
-        
+        control.addTarget(self, action: #selector(notifficationChanged), for: .valueChanged)
         return control
     }()
     
@@ -169,6 +169,13 @@ class SettingsView: UIView {
         super.init(frame: UIScreen.main.bounds)
         
         setupLayout()
+        checkSegments()
+        print(UserDefaults.standard.bool(forKey: "temp"))
+        print(UserDefaults.standard.bool(forKey: "speed"))
+        print(UserDefaults.standard.bool(forKey: "time"))
+        print(UserDefaults.standard.bool(forKey: "notification"))
+
+
     }
     
     required init?(coder: NSCoder) {
@@ -177,8 +184,66 @@ class SettingsView: UIView {
 }
 
 extension SettingsView {
+    
+    func checkSegments() {
+        if UserDefaults.standard.bool(forKey: "temp") == true {
+            temperatureSegmtControl.selectedSegmentIndex = 0
+        } else {
+            temperatureSegmtControl.selectedSegmentIndex = 1
+        }
+        if UserDefaults.standard.bool(forKey: "speed") == true {
+            windSegmtControl.selectedSegmentIndex = 0
+        } else {
+            windSegmtControl.selectedSegmentIndex = 1
+        }
+        if UserDefaults.standard.bool(forKey: "time") == true {
+            timeSegmtControl.selectedSegmentIndex = 0
+        } else {
+            timeSegmtControl.selectedSegmentIndex = 1
+        }
+        if UserDefaults.standard.bool(forKey: "notification") == true {
+            notificationSegmtControl.selectedSegmentIndex = 0
+            } else {
+                notificationSegmtControl.selectedSegmentIndex = 1
+            }
+    }
+    
+    @objc func temperatueChanged(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            SettingsChecker.shared.isTempInC()
+        } else {
+            SettingsChecker.shared.isTempInF()
+        }
+    }
+    
+    @objc func windChanged(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            SettingsChecker.shared.isSpeedinMi()
+           
+        } else {
+            SettingsChecker.shared.isSpeedinKm()
+        }
+    }
+
+    
+    @objc func timeChanged(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            SettingsChecker.shared.isTwelve()
+        } else {
+            SettingsChecker.shared.isNotTwelve()
+        }
+    }
+    
+    @objc func notifficationChanged(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            SettingsChecker.shared.notificationIsOn()
+        } else {
+            SettingsChecker.shared.notificationIsOff()
+        }
+    }
+    
     func setupLayout() {
-        
+
         addSubviews(container)
         container.addSubviews(cloudOne, cloudTwo, cloudThree, subView)
         subView.addSubviews(settingsTitle, titlesStackview, settingsButton, segmentedStackView)

@@ -17,8 +17,15 @@ class GeocodingRequest {
     
     let url = "https://api.openweathermap.org/geo/1.0/direct?appid=15155ae34e7dd30a88d9313e93a5b681"
     
+    let reverseUrl = "https://api.openweathermap.org/geo/1.0/reverse?appid=15155ae34e7dd30a88d9313e93a5b681"
+    
      func getCityCoordinatesBy(name: String)  {
         let urlString = "\(url)&q=\(name)"
+        performRequest(with: urlString)
+    }
+    
+    func getCityByCoordinates(lat: Double, lon: Double) {
+        let urlString = "\(reverseUrl)&lat=\(lat)&lon=\(lon)"
         performRequest(with: urlString)
     }
     

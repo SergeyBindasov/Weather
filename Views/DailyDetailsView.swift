@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import SnapKit
 
-class DetailsView: UIView {
+class DailyDetailsView: UIView {
     var help = Help()
     
     var title: String
@@ -205,11 +205,11 @@ class DetailsView: UIView {
         label.textColor = UIColor(named: K.BrandColors.blackText)
         return label
     }()
-  
- init(frame: CGRect, title: String) {
+    
+    init(frame: CGRect, title: String) {
         self.title = title
         super.init(frame: frame)
-     setupLayout()
+        setupLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -217,25 +217,46 @@ class DetailsView: UIView {
     }
 }
 
-extension DetailsView {
+extension DailyDetailsView {
     
-    func updateUI(with weather: ForecastWeatherModel) {
+    func updateUI(with weather: DailyForecastWeatherModel) {
         if title == "День" {
-            temperature.text = weather.dayTemp
             conditionImageView.image = UIImage(named: weather.conditionName)
-            feelsLikeValue.text = weather.feelsLikeDay
+            if UserDefaults.standard.bool(forKey: "temp") == true {
+                temperature.text = help.inCelcius(temp: weather.dayTemp)
+                feelsLikeValue.text = help.inCelcius(temp: weather.feelsLikeDay)
+                if UserDefaults.standard.bool(forKey: "speed") == true {
+                    windValue.text = String(help.inMilesPerHour(speed: weather.wind)) + " " + "mph"
+                } else { windValue.text = String(weather.wind) + " " + "ms" }
+            } else {
+                if UserDefaults.standard.bool(forKey: "speed") == false {
+                    windValue.text = String(help.inMetersPerSecond(speed: weather.wind)) + " " + "ms"
+                } else { windValue.text = String(weather.wind) + " " + "mph"}
+                temperature.text = help.inFahrenheit(temp: weather.dayTemp)
+                feelsLikeValue.text = help.inFahrenheit(temp: weather.feelsLikeDay)
+            }
         } else {
-            temperature.text = weather.nightTemp
             conditionImageView.image = UIImage(named: K.WeatherIcons.moon)
-            feelsLikeValue.text = weather.feelsLikeNight
+            if UserDefaults.standard.bool(forKey: "temp") == true {
+                temperature.text = help.inCelcius(temp: weather.nightTemp)
+                feelsLikeValue.text = help.inCelcius(temp: weather.feelsLikeNight)
+                if UserDefaults.standard.bool(forKey: "speed") == true {
+                    windValue.text = String(help.inMilesPerHour(speed: weather.wind)) + " " + "mph"
+                } else { windValue.text = String(weather.wind) + " " + "ms" }
+            } else {
+                temperature.text = help.inFahrenheit(temp: weather.nightTemp)
+                feelsLikeValue.text = help.inFahrenheit(temp: weather.feelsLikeNight)
+                if UserDefaults.standard.bool(forKey: "speed") == false {
+                    windValue.text = String(help.inMetersPerSecond(speed: weather.wind)) + " " + "ms"
+                } else { windValue.text = String(weather.wind) + " " + "mph"}
+            }
         }
         descritionLabel.text = weather.description.firstUppercased
-        windValue.text = weather.wind + " " + "м/c"
         uvValue.text = weather.uvi
         rainValue.text = weather.precipitation + " " + "%"
         cloudValue.text = weather.cloud + " " + "%"
     }
-    
+
     func setupLayout() {
         backgroundColor = UIColor(named: K.BrandColors.subviewBack)
         layer.cornerRadius = 5

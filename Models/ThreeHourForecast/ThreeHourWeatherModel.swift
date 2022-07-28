@@ -11,7 +11,7 @@ import UIKit
 struct ThreeHourWeatherModel {
     var time: String
     var conditionID: Int
-    var temp: String
+    var temp: Double
     
     var conditionName: String {
         switch conditionID {

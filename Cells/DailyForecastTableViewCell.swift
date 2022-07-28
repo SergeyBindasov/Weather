@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 import SnapKit
 
-class ForecastTableViewCell: UITableViewCell {
+class DailyForecastTableViewCell: UITableViewCell {
     
-    let measurment = Help()
+    let help = Help()
     
     private lazy var innerView: UIView = {
        let view = UIView()
@@ -103,15 +103,22 @@ class ForecastTableViewCell: UITableViewCell {
     
 }
 
-extension ForecastTableViewCell {
+extension DailyForecastTableViewCell {
     
-    func updateWeather(with weather: ForecastWeatherModel) {
+    func updateWeather(with weather: DailyForecastWeatherModel) {
         dateLabel.text = weather.date
         weatherImage.image = UIImage(named: weather.conditionName)
         dropsText.text = weather.precipitation + "%"
         statusLabel.text = weather.description.firstUppercased
-        minTempLabel.text = weather.minTemp + " " + "-" + " "
-        maxTempLabel.text = weather.maxTemp
+        if UserDefaults.standard.bool(forKey: "temp") == true {
+            minTempLabel.text = help.inCelcius(temp: weather.minTemp) + " " + "-" + " "
+            maxTempLabel.text = help.inCelcius(temp: weather.maxTemp)
+           
+        } else {
+            minTempLabel.text = help.inFahrenheit(temp: weather.minTemp) + " " + "-" + " "
+            maxTempLabel.text = help.inFahrenheit(temp: weather.maxTemp)
+        }
+     
     }
         
     func  setupLayout() {
@@ -121,7 +128,7 @@ extension ForecastTableViewCell {
         innerView.addSubviews(dateLabel, dropsHorizontalStackView, statusLabel, tempStackView, indicatorImage)
         
         innerView.snp.makeConstraints { make in
-            make.top.leading.equalTo(contentView.safeAreaLayoutGuide)
+            make.top.leading.equalTo(contentView)
             make.leading.equalTo(contentView.snp.leading)
             make.trailing.equalTo(contentView.snp.trailing)
             make.bottom.equalTo(contentView).offset(-10)

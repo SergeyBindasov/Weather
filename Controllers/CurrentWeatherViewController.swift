@@ -11,14 +11,10 @@ import UIKit
 class CurrentWeatherViewController: UIViewController {
    
     var cityName: String
-    
     var latitude: Double
-    
     var longitude: Double
-    
     let currentWeatherView = CurrentWeatherView()
-    
-    var networkManager = WeatherNetworkManager()
+    var currntWeatherNetworkManager = CurrentWeatherNetworkManager()
     
     init(cityName: String, latitude: Double, longitude: Double) {
         self.cityName = cityName
@@ -31,20 +27,26 @@ class CurrentWeatherViewController: UIViewController {
         fatalError("error")
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view = currentWeatherView
-        networkManager.delegate = self
-        networkManager.fetchWeatherBy(cityName: cityName)
-        networkManager.fetchWeatherBy(latitude: latitude, longitude: longitude)
+        currntWeatherNetworkManager.delegate = self
+        currntWeatherNetworkManager.fetchWeatherBy(latitude: latitude, longitude: longitude)
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        currntWeatherNetworkManager.fetchWeatherBy(latitude: latitude, longitude: longitude)
     }
 }
 
 
+
 extension CurrentWeatherViewController: WeatherManagerDelegate {
   
-    func didUpdateWeather(_ weatherManager: WeatherNetworkManager, weather: WeatherModel) {
+    func didUpdateWeather(_ weatherManager: CurrentWeatherNetworkManager, weather: WeatherModel) {
         DispatchQueue.main.async {
             self.currentWeatherView.updateCurrentWeatherUI(with: weather)
         }

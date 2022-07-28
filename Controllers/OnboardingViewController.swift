@@ -7,8 +7,14 @@
 
 import UIKit
 import SnapKit
+import CoreLocation
+import RealmSwift
 
 class OnboardingViewController: UIViewController {
+    
+    let realm = try! Realm()
+    var locationManager = CLLocationManager()
+    var geo = GeocodingRequest()
     
     private lazy var girlImage: UIImageView = {
        let image = UIImageView()
@@ -59,11 +65,50 @@ class OnboardingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
+        locationManager.delegate = self
+        geo.delegate = self
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(rejectionTapped))
         rejectLabel.addGestureRecognizer(tap)
     }
 }
+
+extension OnboardingViewController: GeocodingManagerDelegate {
+    func createNewCity(_ networkManager: GeocodingRequest, model: GeocodingModel) {
+        DispatchQueue.main.async {
+        
+        let newCity = CityCoordintes()
+        newCity.cityName = model.cityName
+        newCity.latitude = model.latitude
+        newCity.longitude = model.longitude
+        do {
+            try self.realm.write({
+                self.realm.add(newCity)
+                print(newCity)
+            })
+        } catch {
+            print("ошибка при сохранении города \(error)")
+        }
+        }
+    }
+}
+
+extension OnboardingViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let first = locations.first else { return }
+        manager.stopUpdatingLocation()
+        print(first.coordinate)
+        geo.getCityByCoordinates(lat: first.coordinate.latitude, lon: first.coordinate.longitude)
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        checkUserLocationPermissions()
+    }
+    
+}
+
+
+
 
 extension OnboardingViewController {
     private func setupLayout() {
@@ -107,10 +152,42 @@ extension OnboardingViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             self.confirmButton.backgroundColor = UIColor(named: K.BrandColors.orange)
         }
-        print("согласие на предоставление данных")
+        checkUserLocationPermissions()
+        OnbordingChecker.shared.isNotNewUser()
     }
     
     @objc private func rejectionTapped(sender:UITapGestureRecognizer) {
-        print("отказ от предоставления данных")
+        OnbordingChecker.shared.isNotNewUser()
+        dismiss(animated: true, completion: nil)
+        navigationController?.pushViewController(MainViewController(), animated: true)
     }
+    
+    func checkUserLocationPermissions() {
+
+        if #available(iOS 14.0, *) {
+            switch locationManager.authorizationStatus {
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+
+            case .authorizedAlways, .authorizedWhenInUse:
+                
+                locationManager.startUpdatingLocation()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                           self.navigationController?.pushViewController(MainViewController(), animated: true)
+                      }
+
+            case .denied, .restricted:
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                           self.navigationController?.pushViewController(MainViewController(), animated: true)
+                      }
+
+            @unknown default:
+                fatalError("Не обрабатываемый статус")
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+    
 }
+              

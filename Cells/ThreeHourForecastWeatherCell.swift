@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 import SnapKit
 
-class DailyWeatherCell: UICollectionViewCell {
+class ThreeHourForecastWeatherCell: UICollectionViewCell {
     
-    let measurment = Help()
+    let help = Help()
         
     private lazy var timeLabel: UILabel = {
         let time = UILabel()
@@ -44,12 +44,16 @@ class DailyWeatherCell: UICollectionViewCell {
     }
 }
 
-extension DailyWeatherCell {
+extension ThreeHourForecastWeatherCell {
     
     func updateWeather(with weather: ThreeHourWeatherModel) {
         timeLabel.text = weather.time
         weatherImage.image = UIImage(named: weather.conditionName)
-        weatherLabel.text = weather.temp
+        if UserDefaults.standard.bool(forKey: "temp") == true {
+            weatherLabel.text = help.inCelcius(temp: weather.temp)
+        } else {
+            weatherLabel.text = help.inFahrenheit(temp: weather.temp)
+        }
     }
     
     func isTapped() {
